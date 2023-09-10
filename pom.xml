@@ -35,8 +35,8 @@
   <name>Cat Downloader Legacy Main Project</name>
   <url>https://github.com/Kanzaji/Cat-Downloader-Legacy</url>
   <modules>
-    <module>src/cdlupdater</module>
-    <module>src/catdownloaderlegacy</module>
+    <module>src/klauncher-updater</module>
+    <module>src/kanzas-launcher</module>
   </modules>
 
   <properties>

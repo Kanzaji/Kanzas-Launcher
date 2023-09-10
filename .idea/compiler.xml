@@ -6,12 +6,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="CDL-Updater" />
-        <module name="Cat-Downloader-Legacy" />
+        <module name="Kanzas-Launcher" />
+        <module name="KLauncher-Updater" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Kanzas-Launcher" target="1.5" />
+      <module name="catdownloaderlegacy" target="17" />
+      <module name="Kanza's-Launcher" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

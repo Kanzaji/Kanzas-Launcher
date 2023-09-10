@@ -7,7 +7,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>CDL-Updater</artifactId>
+    <artifactId>KLauncher-Updater</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
