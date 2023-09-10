@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Custom" type="Application" factoryName="Application" folderName="Pack tests">
     <option name="MAIN_CLASS_NAME" value="com.kanzaji.kanzasLauncher.CatDownloader" />
-    <module name="Kanza's-Launcher" />
+    <module name="Kanzas-Launcher" />
     <option name="PROGRAM_PARAMETERS" value="-LogsPath:Logs -Settings:False -WorkingDirectory:&quot;Monstrosity&quot; -Experimental:true -Mode:Pack -LogsPath:Logs" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/TestingArea" />
     <method v="2">

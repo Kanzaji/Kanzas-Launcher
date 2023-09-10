@@ -28,12 +28,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.kanzaji</groupId>
-  <artifactId>Cat-Downloader-Legacy-Main-Project</artifactId>
+  <artifactId>Kanzas-Launcher-Main-Project</artifactId>
   <version>1.0</version>
   <packaging>pom</packaging>
 
-  <name>Cat Downloader Legacy Main Project</name>
-  <url>https://github.com/Kanzaji/Cat-Downloader-Legacy</url>
+  <name>Kanza's Launcher Main Project</name>
+  <url>https://github.com/Kanzaji/Kanzas-Launcher</url>
   <modules>
     <module>src/klauncher-updater</module>
     <module>src/kanzas-launcher</module>
@@ -106,9 +106,7 @@
               <descriptor>testDescriptor.xml</descriptor>
             </descriptors>
           </configuration>
-
         </plugin>
-
       </plugins>
     </pluginManagement>
   </build>
