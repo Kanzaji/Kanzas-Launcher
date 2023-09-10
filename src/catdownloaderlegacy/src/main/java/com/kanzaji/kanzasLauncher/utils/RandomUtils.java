@@ -22,9 +22,9 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy.utils;
+package com.kanzaji.kanzasLauncher.utils;
 
-import com.kanzaji.catdownloaderlegacy.loggers.LoggerCustom;
+import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

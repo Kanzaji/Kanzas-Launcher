@@ -22,14 +22,14 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy.data;
+package com.kanzaji.kanzasLauncher.data;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
  * Class used to represent JSON Structure of configuration file.
- * @see com.kanzaji.catdownloaderlegacy.utils.SettingsManager
+ * @see com.kanzaji.kanzasLauncher.utils.SettingsManager
  */
 public class Settings {
     /**

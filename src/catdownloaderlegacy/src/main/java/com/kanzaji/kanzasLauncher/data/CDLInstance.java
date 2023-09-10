@@ -22,17 +22,17 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy.data;
+package com.kanzaji.kanzasLauncher.data;
 
-import com.kanzaji.catdownloaderlegacy.ArgumentDecoder;
-import com.kanzaji.catdownloaderlegacy.exceptions.UnknownFormatException;
-import com.kanzaji.catdownloaderlegacy.loggers.LoggerCustom;
-import com.kanzaji.catdownloaderlegacy.utils.FileUtils;
-import com.kanzaji.catdownloaderlegacy.utils.FileVerUtils;
-import com.kanzaji.catdownloaderlegacy.utils.NetworkingUtils;
-import com.kanzaji.catdownloaderlegacy.utils.RandomUtils;
-import static com.kanzaji.catdownloaderlegacy.CatDownloader.WORKPATH;
-import static com.kanzaji.catdownloaderlegacy.guis.MRSecurityCheckGUI.modrinthSecurityCheckFail;
+import com.kanzaji.kanzasLauncher.ArgumentDecoder;
+import com.kanzaji.kanzasLauncher.exceptions.UnknownFormatException;
+import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
+import com.kanzaji.kanzasLauncher.utils.FileUtils;
+import com.kanzaji.kanzasLauncher.utils.FileVerUtils;
+import com.kanzaji.kanzasLauncher.utils.NetworkingUtils;
+import com.kanzaji.kanzasLauncher.utils.RandomUtils;
+import static com.kanzaji.kanzasLauncher.CatDownloader.WORKPATH;
+import static com.kanzaji.kanzasLauncher.guis.MRSecurityCheckGUI.modrinthSecurityCheckFail;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

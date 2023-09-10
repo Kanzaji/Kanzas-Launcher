@@ -22,12 +22,12 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy.utils;
+package com.kanzaji.kanzasLauncher.utils;
 
-import com.kanzaji.catdownloaderlegacy.ArgumentDecoder;
-import com.kanzaji.catdownloaderlegacy.data.Settings;
-import com.kanzaji.catdownloaderlegacy.loggers.LoggerCustom;
-import static com.kanzaji.catdownloaderlegacy.utils.RandomUtils.checkIfJsonObject;
+import com.kanzaji.kanzasLauncher.ArgumentDecoder;
+import com.kanzaji.kanzasLauncher.data.Settings;
+import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
+import static com.kanzaji.kanzasLauncher.utils.RandomUtils.checkIfJsonObject;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -376,7 +376,7 @@ public class SettingsManager {
     /**
      * Used to create a String required to save ModBlackList into the settings file!
      * @param Line {@link String} current line in the settings file.
-     * @param blackList {@link com.kanzaji.catdownloaderlegacy.data.Settings.BlackList}<{@link String}> with blacklist entries.
+     * @param blackList {@link com.kanzaji.kanzasLauncher.data.Settings.BlackList}<{@link String}> with blacklist entries.
      * @param iterator {@link Iterator}<{@link String}> with iterator over Settings file.
      * @return {@link String} with formatted ModBlackList ready to write to Settings File.
      */

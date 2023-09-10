@@ -22,14 +22,14 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy;
+package com.kanzaji.kanzasLauncher;
 
-import com.kanzaji.catdownloaderlegacy.data.Settings;
-import com.kanzaji.catdownloaderlegacy.loggers.LoggerCustom;
-import com.kanzaji.catdownloaderlegacy.guis.UpdaterGUI;
-import com.kanzaji.catdownloaderlegacy.utils.*;
+import com.kanzaji.kanzasLauncher.data.Settings;
+import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
+import com.kanzaji.kanzasLauncher.guis.UpdaterGUI;
+import com.kanzaji.kanzasLauncher.utils.*;
 
-import static com.kanzaji.catdownloaderlegacy.CatDownloader.*;
+import static com.kanzaji.kanzasLauncher.CatDownloader.*;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

@@ -22,58 +22,53 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy.utils;
+package com.kanzaji.kanzasLauncher.guis;
 
+import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
+
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDateTime;
+import javax.swing.*;
+import java.awt.*;
 
 /**
- * This class holds utility methods related to date.
- * @see DateUtils#getCurrentDate()
- * @see DateUtils#getCurrentTime()
+ * This class holds utility methods related to GUI.
  */
-public class DateUtils {
-    /**
-     * Used to get a {@link String} with current Date.
-     * @return {@link String} with current Date.
-     */
-    public static @NotNull String getCurrentDate() {
-        LocalDateTime time = LocalDateTime.now();
-        return time.getDayOfMonth() + "." + time.getMonthValue() + "." + time.getYear();
-    }
+public class GUIUtils {
+    private static final LoggerCustom logger = new LoggerCustom("GUI Utilities");
 
     /**
-     * Used to get a {@link String} with current Time (Hours-Minutes-Seconds).
-     * @return {@link String} with current Time.
+     * This method is used to set LookAndFeel of GUI's to the system one.
      */
-    public static @NotNull String getCurrentTime() {
-        LocalDateTime time = LocalDateTime.now();
-        return time.getHour() + "-" + time.getMinute() + "-" + time.getSecond();
+    public static void setLookAndFeel() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            logger.logStackTrace("Look And Feel not available! Going back to default.", e);
+        }
     }
 
+    private static int gWidth = 1;
+    private static int gHeight = 1;
     /**
-     * Used to get a {@link String} with current Time (Hours-Minutes-Seconds.Nano).
-     * @return {@link String} with current Time.
+     * This method is used to update static variables for the Width and Height of the user display.
      */
-    public static @NotNull String getCurrentTimeDetail() {
-        LocalDateTime time = LocalDateTime.now();
-        return time.getHour() + "-" + time.getMinute() + "-" + time.getSecond() + "." + time.getNano();
+    public static void updateResolutionInformation() {
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        gWidth = gd.getDisplayMode().getWidth();
+        gHeight = gd.getDisplayMode().getHeight();
     }
-
-    /**
-     * Used to get a {@link String} with current Date and Time (Day.Month.Year Hours-Minutes-Seconds).
-     * @return {@link String} with current Date and Time.
-     */
-    public static @NotNull String getCurrentFullDate() {
-        return getCurrentDate() + " " + getCurrentTime();
+    @Contract(pure = true)
+    public static int getScreenWidth() {
+        return gWidth;
     }
-
-    /**
-     * Used to get a {@link String} with current Date and Time (Day.Month.Year Hours-Minutes-Seconds.Nano).
-     * @return {@link String} with current Date and Time.
-     */
-    public static @NotNull String getCurrentFulLDateDetail() {
-        return getCurrentDate() + " " + getCurrentTimeDetail();
+    @Contract(pure = true)
+    public static int getScreenHeight() {
+        return gHeight;
+    }
+    @Contract(value = " -> new", pure = true)
+    public static @NotNull Dimension getScreenDimension() {
+        return new Dimension(gWidth, gHeight);
     }
 }

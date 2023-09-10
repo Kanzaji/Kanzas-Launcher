@@ -22,7 +22,7 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy.loggers;
+package com.kanzaji.kanzasLauncher.loggers;
 
 import org.jetbrains.annotations.Nullable;
 

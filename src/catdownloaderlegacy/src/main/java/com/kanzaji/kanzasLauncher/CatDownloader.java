@@ -22,16 +22,16 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy;
+package com.kanzaji.kanzasLauncher;
 
-import com.kanzaji.catdownloaderlegacy.data.CDLInstance;
-import com.kanzaji.catdownloaderlegacy.data.CFManifest;
-import com.kanzaji.catdownloaderlegacy.data.MRIndex;
-import com.kanzaji.catdownloaderlegacy.exceptions.FormatVersionMismatchException;
-import com.kanzaji.catdownloaderlegacy.guis.GUIUtils;
-import com.kanzaji.catdownloaderlegacy.data.CFMinecraftInstance;
-import com.kanzaji.catdownloaderlegacy.loggers.LoggerCustom;
-import com.kanzaji.catdownloaderlegacy.utils.*;
+import com.kanzaji.kanzasLauncher.data.CDLInstance;
+import com.kanzaji.kanzasLauncher.data.CFManifest;
+import com.kanzaji.kanzasLauncher.data.MRIndex;
+import com.kanzaji.kanzasLauncher.exceptions.FormatVersionMismatchException;
+import com.kanzaji.kanzasLauncher.guis.GUIUtils;
+import com.kanzaji.kanzasLauncher.data.CFMinecraftInstance;
+import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
+import com.kanzaji.kanzasLauncher.utils.*;
 
 import com.google.gson.Gson;
 

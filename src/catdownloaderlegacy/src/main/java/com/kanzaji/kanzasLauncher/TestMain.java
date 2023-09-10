@@ -22,37 +22,18 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy.data;
+package com.kanzaji.kanzasLauncher;
 
-/**
- * Class used to represent Data Structure for MinecraftInstance.json file.
- */
-@SuppressWarnings("unused")
-public class CFMinecraftInstance {
 
-    public baseModLoader baseModLoader;
-    public String name;
-    public CFManifest manifest;
-    public installedAddons[] installedAddons;
+import com.kanzaji.kanzasLauncher.data.CDLInstance;
 
-    public static class installedAddons {
-        public Number addonID;
-        public AddonFile installedFile;
-    }
-    public static class AddonFile {
-        public Number id;
-        public Number fileLength;
-        public String downloadUrl;
-        public String fileName;
-    }
-    public static class baseModLoader {
-        public String name;
-        public String minecraftVersion;
-        public String forgeVersion;
-        //TODO: Verify CF Uses those names for different modLoaders.
-        public String fabricVersion;
-        public String quiltVersion;
-        // TODO: Change this to anything that CF will use for "NeoForge" thing.
-        public String neoForgeVersion;
+import java.nio.file.Path;
+
+@SuppressWarnings("ALL")
+public class TestMain {
+    public static void main(String[] args) throws InterruptedException {
+        System.out.println("This is a test run! Yea this shouldn't be included in the github nor release.");
+
+        System.out.println(CDLInstance.parseJson(Path.of("minecraftinstance.json")).toString());
     }
 }

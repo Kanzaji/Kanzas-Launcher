@@ -22,10 +22,10 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy.data;
+package com.kanzaji.kanzasLauncher.data;
 
-import com.kanzaji.catdownloaderlegacy.loggers.LoggerCustom;
-import com.kanzaji.catdownloaderlegacy.Updater;
+import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
+import com.kanzaji.kanzasLauncher.Updater;
 
 import org.jetbrains.annotations.ApiStatus;
 
@@ -73,8 +73,8 @@ public class CFManifest {
         public int fileSize;
 
         /**
-         * This method creates new {@link com.kanzaji.catdownloaderlegacy.data.CDLInstance.ModFile} object, with information taken from this object. It does not guarantee that the returned mod file will not contain null or incorrect values.
-         * @return new {@link com.kanzaji.catdownloaderlegacy.data.CDLInstance.ModFile} with information from this object.
+         * This method creates new {@link com.kanzaji.kanzasLauncher.data.CDLInstance.ModFile} object, with information taken from this object. It does not guarantee that the returned mod file will not contain null or incorrect values.
+         * @return new {@link com.kanzaji.kanzasLauncher.data.CDLInstance.ModFile} with information from this object.
          */
         public CDLInstance.ModFile toCDLModFile() {return new CDLInstance.ModFile(this.getFileName(), this.downloadUrl, this.fileSize);}
 

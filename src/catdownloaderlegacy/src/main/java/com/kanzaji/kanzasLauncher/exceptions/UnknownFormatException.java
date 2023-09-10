@@ -22,7 +22,7 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy.exceptions;
+package com.kanzaji.kanzasLauncher.exceptions;
 
 /**
  * Signals that parsed file is in a format that is either incorrect or is an unknown format.

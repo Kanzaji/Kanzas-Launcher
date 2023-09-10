@@ -22,53 +22,60 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy.guis;
+package com.kanzaji.kanzasLauncher.data;
 
-import com.kanzaji.catdownloaderlegacy.loggers.LoggerCustom;
-
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
 
 /**
- * This class holds utility methods related to GUI.
+ * This class holds the data schema for Modrinth.index.json file from the mrpack archives.
  */
-public class GUIUtils {
-    private static final LoggerCustom logger = new LoggerCustom("GUI Utilities");
-
+@SuppressWarnings("unused")
+public class MRIndex {
+    public Number formatVersion;
+    public String game;
+    public String versionId;
+    public String name;
     /**
-     * This method is used to set LookAndFeel of GUI's to the system one.
+     * Optional field.
      */
-    public static void setLookAndFeel() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            logger.logStackTrace("Look And Feel not available! Going back to default.", e);
+    public String summary;
+    public MRDependencies dependencies;
+    public MRModFile[] files;
+
+    public static class MRModFile {
+        private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        @Override
+        public String toString() {
+            return gson.toJson(this);
+        }
+        public Number fileSize;
+        public String path;
+        public String[] downloads;
+        public CDLInstance.Hashes hashes;
+        public env env;
+        /**
+         * Optional field.
+         */
+        public static class env {
+            public static String[] acceptedValues = {
+                "required","optional","unsupported"
+            };
+            public String client;
+            public String server;
         }
     }
-
-    private static int gWidth = 1;
-    private static int gHeight = 1;
-    /**
-     * This method is used to update static variables for the Width and Height of the user display.
-     */
-    public static void updateResolutionInformation() {
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        gWidth = gd.getDisplayMode().getWidth();
-        gHeight = gd.getDisplayMode().getHeight();
-    }
-    @Contract(pure = true)
-    public static int getScreenWidth() {
-        return gWidth;
-    }
-    @Contract(pure = true)
-    public static int getScreenHeight() {
-        return gHeight;
-    }
-    @Contract(value = " -> new", pure = true)
-    public static @NotNull Dimension getScreenDimension() {
-        return new Dimension(gWidth, gHeight);
+    public static class MRDependencies {
+        public String minecraft;
+        @SerializedName("fabric-loader")
+        public String fabric;
+        @SerializedName("quilt-loader")
+        public String quilt;
+        @SerializedName("forge")
+        public String forge;
+        // TODO: Future proofing!
+        @SerializedName("neo-forge")
+        public String neoforge;
     }
 }

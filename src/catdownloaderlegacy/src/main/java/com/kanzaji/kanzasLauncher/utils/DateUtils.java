@@ -22,60 +22,58 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy.data;
+package com.kanzaji.kanzasLauncher.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.SerializedName;
+import org.jetbrains.annotations.NotNull;
+
+import java.time.LocalDateTime;
 
 /**
- * This class holds the data schema for Modrinth.index.json file from the mrpack archives.
+ * This class holds utility methods related to date.
+ * @see DateUtils#getCurrentDate()
+ * @see DateUtils#getCurrentTime()
  */
-@SuppressWarnings("unused")
-public class MRIndex {
-    public Number formatVersion;
-    public String game;
-    public String versionId;
-    public String name;
+public class DateUtils {
     /**
-     * Optional field.
+     * Used to get a {@link String} with current Date.
+     * @return {@link String} with current Date.
      */
-    public String summary;
-    public MRDependencies dependencies;
-    public MRModFile[] files;
-
-    public static class MRModFile {
-        private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        @Override
-        public String toString() {
-            return gson.toJson(this);
-        }
-        public Number fileSize;
-        public String path;
-        public String[] downloads;
-        public CDLInstance.Hashes hashes;
-        public env env;
-        /**
-         * Optional field.
-         */
-        public static class env {
-            public static String[] acceptedValues = {
-                "required","optional","unsupported"
-            };
-            public String client;
-            public String server;
-        }
+    public static @NotNull String getCurrentDate() {
+        LocalDateTime time = LocalDateTime.now();
+        return time.getDayOfMonth() + "." + time.getMonthValue() + "." + time.getYear();
     }
-    public static class MRDependencies {
-        public String minecraft;
-        @SerializedName("fabric-loader")
-        public String fabric;
-        @SerializedName("quilt-loader")
-        public String quilt;
-        @SerializedName("forge")
-        public String forge;
-        // TODO: Future proofing!
-        @SerializedName("neo-forge")
-        public String neoforge;
+
+    /**
+     * Used to get a {@link String} with current Time (Hours-Minutes-Seconds).
+     * @return {@link String} with current Time.
+     */
+    public static @NotNull String getCurrentTime() {
+        LocalDateTime time = LocalDateTime.now();
+        return time.getHour() + "-" + time.getMinute() + "-" + time.getSecond();
+    }
+
+    /**
+     * Used to get a {@link String} with current Time (Hours-Minutes-Seconds.Nano).
+     * @return {@link String} with current Time.
+     */
+    public static @NotNull String getCurrentTimeDetail() {
+        LocalDateTime time = LocalDateTime.now();
+        return time.getHour() + "-" + time.getMinute() + "-" + time.getSecond() + "." + time.getNano();
+    }
+
+    /**
+     * Used to get a {@link String} with current Date and Time (Day.Month.Year Hours-Minutes-Seconds).
+     * @return {@link String} with current Date and Time.
+     */
+    public static @NotNull String getCurrentFullDate() {
+        return getCurrentDate() + " " + getCurrentTime();
+    }
+
+    /**
+     * Used to get a {@link String} with current Date and Time (Day.Month.Year Hours-Minutes-Seconds.Nano).
+     * @return {@link String} with current Date and Time.
+     */
+    public static @NotNull String getCurrentFulLDateDetail() {
+        return getCurrentDate() + " " + getCurrentTimeDetail();
     }
 }

@@ -22,10 +22,10 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy.utils;
+package com.kanzaji.kanzasLauncher.utils;
 
-import com.kanzaji.catdownloaderlegacy.ArgumentDecoder;
-import com.kanzaji.catdownloaderlegacy.loggers.LoggerCustom;
+import com.kanzaji.kanzasLauncher.ArgumentDecoder;
+import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

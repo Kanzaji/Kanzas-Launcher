@@ -22,14 +22,14 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy;
+package com.kanzaji.kanzasLauncher;
 
-import com.kanzaji.catdownloaderlegacy.data.CDLInstance;
-import com.kanzaji.catdownloaderlegacy.data.CFManifest;
-import com.kanzaji.catdownloaderlegacy.loggers.LoggerCustom;
-import com.kanzaji.catdownloaderlegacy.utils.FileUtils;
-import com.kanzaji.catdownloaderlegacy.utils.RandomUtils;
-import com.kanzaji.catdownloaderlegacy.utils.SettingsManager;
+import com.kanzaji.kanzasLauncher.data.CDLInstance;
+import com.kanzaji.kanzasLauncher.data.CFManifest;
+import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
+import com.kanzaji.kanzasLauncher.utils.FileUtils;
+import com.kanzaji.kanzasLauncher.utils.RandomUtils;
+import com.kanzaji.kanzasLauncher.utils.SettingsManager;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +41,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Stream;
 
-import static com.kanzaji.catdownloaderlegacy.CatDownloader.WORKPATH;
+import static com.kanzaji.kanzasLauncher.CatDownloader.WORKPATH;
 
 /**
  * SyncManager is a class used to manage synchronization of the mods.

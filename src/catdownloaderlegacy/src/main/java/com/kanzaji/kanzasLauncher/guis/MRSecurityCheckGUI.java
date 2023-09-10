@@ -22,11 +22,11 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy.guis;
+package com.kanzaji.kanzasLauncher.guis;
 
-import com.kanzaji.catdownloaderlegacy.data.MRIndex;
-import com.kanzaji.catdownloaderlegacy.loggers.LoggerCustom;
-import com.kanzaji.catdownloaderlegacy.utils.RandomUtils;
+import com.kanzaji.kanzasLauncher.data.MRIndex;
+import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
+import com.kanzaji.kanzasLauncher.utils.RandomUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

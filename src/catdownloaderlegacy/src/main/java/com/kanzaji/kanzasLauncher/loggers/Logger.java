@@ -22,11 +22,11 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy.loggers;
+package com.kanzaji.kanzasLauncher.loggers;
 
-import com.kanzaji.catdownloaderlegacy.ArgumentDecoder;
-import com.kanzaji.catdownloaderlegacy.utils.DateUtils;
-import com.kanzaji.catdownloaderlegacy.utils.FileUtils;
+import com.kanzaji.kanzasLauncher.ArgumentDecoder;
+import com.kanzaji.kanzasLauncher.utils.DateUtils;
+import com.kanzaji.kanzasLauncher.utils.FileUtils;
 
 import org.jetbrains.annotations.Nullable;
 

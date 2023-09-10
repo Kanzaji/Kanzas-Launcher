@@ -49,7 +49,7 @@
                         <archive>
                             <manifest>
                                 <addClasspath>.</addClasspath>
-                                <mainClass>com.kanzaji.catdownloaderlegacy.CatDownloader</mainClass>
+                                <mainClass>com.kanzaji.kanzasLauncher.CatDownloader</mainClass>
                             </manifest>
                         </archive>
                     </configuration>

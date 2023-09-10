@@ -22,12 +22,12 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy;
+package com.kanzaji.kanzasLauncher;
 
-import com.kanzaji.catdownloaderlegacy.data.Settings;
-import com.kanzaji.catdownloaderlegacy.loggers.LoggerCustom;
+import com.kanzaji.kanzasLauncher.data.Settings;
+import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
 
-import com.kanzaji.catdownloaderlegacy.utils.FileUtils;
+import com.kanzaji.kanzasLauncher.utils.FileUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.FileNotFoundException;
