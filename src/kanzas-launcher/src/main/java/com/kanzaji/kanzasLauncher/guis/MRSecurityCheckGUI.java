@@ -87,7 +87,7 @@ public class MRSecurityCheckGUI {
         jl.setFont(textFont);
         jl.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         panel.add(jl);
-        JOptionPane.showMessageDialog(null, panel, "CatDownloader Legacy - SECURITY ALERT", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, panel, "KanzasLauncher Legacy - SECURITY ALERT", JOptionPane.PLAIN_MESSAGE);
 
         RandomUtils.closeTheApp(401);
     }

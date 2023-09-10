@@ -41,7 +41,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Stream;
 
-import static com.kanzaji.kanzasLauncher.CatDownloader.WORKPATH;
+import static com.kanzaji.kanzasLauncher.KanzasLauncher.WORKPATH;
 
 /**
  * SyncManager is a class used to manage synchronization of the mods.

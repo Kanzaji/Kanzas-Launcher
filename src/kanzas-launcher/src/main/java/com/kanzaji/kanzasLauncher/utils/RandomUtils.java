@@ -24,6 +24,7 @@
 
 package com.kanzaji.kanzasLauncher.utils;
 
+import com.kanzaji.kanzasLauncher.KanzasLauncher;
 import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
 
 import com.google.gson.Gson;
@@ -66,8 +67,8 @@ public class RandomUtils {
      */
     public static void closeTheApp(int exitCode) {
         if (logger.isInitialized()) {
-            logger.log("Cat-Downloader Legacy is created and maintained by Kanzaji! Find the source code and issue tracker here:");
-            logger.log("https://github.com/Kanzaji/Cat-Downloader-Legacy");
+            logger.log("Kanza's Launcher is created and maintained by Kanzaji! Find the source code and issue tracker here:");
+            logger.log(KanzasLauncher.REPOSITORY);
         }
         System.exit(exitCode);
     }

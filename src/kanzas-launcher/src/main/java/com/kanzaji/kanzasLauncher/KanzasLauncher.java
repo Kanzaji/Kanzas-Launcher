@@ -43,18 +43,18 @@ import java.util.stream.Stream;
 
 /**
  * Main class holding Global variables for the app and containing the main method.
- * @see CatDownloader#main(String[])
+ * @see KanzasLauncher#main(String[])
  */
-public final class CatDownloader {
+public final class KanzasLauncher {
     // Launch fresh instances of required utilities.
     private static final LoggerCustom logger = new LoggerCustom("Main");
     private static final Gson gson = new Gson();
     static final ArgumentDecoder ARD = ArgumentDecoder.getInstance();
 
     // Global variables
-    public static final String VERSION = "2.1.3";
-    public static final String REPOSITORY = "https://github.com/Kanzaji/Cat-Downloader-Legacy";
-    public static final String NAME = "Cat Downloader Legacy";
+    public static final String VERSION = "0.0.1-DEVELOP";
+    public static final String REPOSITORY = "https://github.com/Kanzaji/Kanzas-Launcher";
+    public static final String NAME = "Kanza's Launcher";
     /**
      * Path to the java environment running the app.
      */
@@ -109,7 +109,7 @@ public final class CatDownloader {
             RandomUtils.closeTheApp(0);
         } catch (Exception | Error e) {
             System.out.println("---------------------------------------------------------------------");
-            System.out.println("CatDownloader crashed! More details are in the log file at \"" + logger.getLogPath() + "\".");
+            System.out.println("Kanza's Launcher crashed! More details are in the log file at \"" + logger.getLogPath() + "\".");
             logger.logStackTrace("Exception thrown while executing main app code!", e);
             RandomUtils.closeTheApp(1);
         }
@@ -406,7 +406,7 @@ public final class CatDownloader {
             logger.init();
             logger.log(NAME + " version: " + VERSION);
             try {
-                APPPATH = Path.of(CatDownloader.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath().replaceFirst("/", ""));
+                APPPATH = Path.of(KanzasLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath().replaceFirst("/", ""));
                 logger.log("App Path: " + APPPATH.toAbsolutePath());
             } catch (Exception e) {
                 logger.logStackTrace("Failed to get App directory!", e);

@@ -29,7 +29,7 @@ import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
 import com.kanzaji.kanzasLauncher.guis.UpdaterGUI;
 import com.kanzaji.kanzasLauncher.utils.*;
 
-import static com.kanzaji.kanzasLauncher.CatDownloader.*;
+import static com.kanzaji.kanzasLauncher.KanzasLauncher.*;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

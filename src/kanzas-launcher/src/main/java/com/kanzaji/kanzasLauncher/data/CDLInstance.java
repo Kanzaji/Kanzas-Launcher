@@ -31,7 +31,7 @@ import com.kanzaji.kanzasLauncher.utils.FileUtils;
 import com.kanzaji.kanzasLauncher.utils.FileVerUtils;
 import com.kanzaji.kanzasLauncher.utils.NetworkingUtils;
 import com.kanzaji.kanzasLauncher.utils.RandomUtils;
-import static com.kanzaji.kanzasLauncher.CatDownloader.WORKPATH;
+import static com.kanzaji.kanzasLauncher.KanzasLauncher.WORKPATH;
 import static com.kanzaji.kanzasLauncher.guis.MRSecurityCheckGUI.modrinthSecurityCheckFail;
 
 import com.google.gson.Gson;

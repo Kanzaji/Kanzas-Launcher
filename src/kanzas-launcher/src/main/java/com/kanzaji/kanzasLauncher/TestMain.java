@@ -33,7 +33,7 @@ import java.nio.file.Path;
 public class TestMain {
     public static void main(String[] args) throws InterruptedException {
         System.out.println("This is a test run! Yea this shouldn't be included in the github nor release.");
-
-        System.out.println(CDLInstance.parseJson(Path.of("minecraftinstance.json")).toString());
+        CommandInterpreter.getInstance().registerArgument("TestArgument", System.out::println);
+        CommandInterpreter.getInstance().decodeArguments(args);
     }
 }
