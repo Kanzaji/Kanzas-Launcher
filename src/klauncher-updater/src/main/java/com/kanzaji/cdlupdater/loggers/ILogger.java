@@ -24,8 +24,6 @@
 
 package com.kanzaji.cdlupdater.loggers;
 
-import java.io.IOException;
-
 /**
  * @apiNote Imported from com.kanzaji.catdownloaderlegacy
  */

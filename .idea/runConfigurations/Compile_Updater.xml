@@ -14,7 +14,7 @@
               <option value="compile" />
               <option value="assembly:single" />
               <option value="-pl" />
-              <option value=":CDL-Updater" />
+              <option value=":KL-Updater" />
             </list>
           </option>
           <option name="pomFileName" />

@@ -27,26 +27,21 @@ package com.kanzaji.kanzasLauncher;
 import com.kanzaji.kanzasLauncher.data.Settings;
 import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
 
-import com.kanzaji.kanzasLauncher.utils.FileUtils;
+import com.kanzaji.kanzasLauncher.utils.InterpretationUtilities;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.FileNotFoundException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.rmi.UnexpectedException;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class ArgumentDecoder {
     private static final LoggerCustom logger = new LoggerCustom("Argument Decoder");
+    private static final CommandRegistry CR = CommandRegistry.getInstance();
     private static final class InstanceHolder {private static final ArgumentDecoder instance = new ArgumentDecoder();}
-    private static final String[] modes = {
-            "cf-pack",
-            "cf-instance",
-            "modrinth",
-            "automatic"
-    };
+    private static boolean registerLock = false;
     private ArgumentDecoder() {}
     private String WorkingDirectory = "";
     private String SettingsPath = "";
@@ -80,7 +75,12 @@ public class ArgumentDecoder {
     /**
      * Decodes all arguments passed to the program, and saves necessary data in the instance of the ArgumentDecoder.
      * @param arguments String[] with arguments passed to the program.
+     * @deprecated ArgumentDecoder is planned for a rework.
+     * Use {@link CommandRegistry#decodeArguments(String[])} for a decoding of argument list,
+     * and {@link CommandRegistry#registerArgument(String, Consumer)} for registering argument handlers.
+     * This method is left until all arguments are transferred over to the new system.
      */
+    @Deprecated(since = "0.1-DEV", forRemoval = true)
     public void decodeArguments(String @NotNull [] arguments) throws IllegalArgumentException, FileNotFoundException, UnexpectedException {
         logger.log("Running with arguments:");
         for (String fullArgument : arguments) {
@@ -97,33 +97,33 @@ public class ArgumentDecoder {
 
             switch (argument) {
                 // Path Arguments
-                case "workingdirectory" -> this.WorkingDirectory = validatePath(value, "-WorkingDirectory");
-                case "settingspath" -> this.SettingsPath = validatePath(value, "-SettingsPath");
-                case "logspath" -> this.LogPath = validatePath(value, "-LogsPath", true);
-                case "cachepath" -> this.CachePath = validatePath(value, "-CachePath", true);
+                case "workingdirectory" -> this.WorkingDirectory = InterpretationUtilities.validatePath(value, "-WorkingDirectory");
+                case "settingspath" -> this.SettingsPath = InterpretationUtilities.validatePath(value, "-SettingsPath");
+                case "logspath" -> this.LogPath = InterpretationUtilities.validatePath(value, "-LogsPath", true);
+                case "cachepath" -> this.CachePath = InterpretationUtilities.validatePath(value, "-CachePath", true);
 
                 // Int Arguments
-                case "threadcount" -> this.ThreadCount = getIntValue(value, "-ThreadCount", 1, 128);
-                case "downloadattempts" -> this.DownloadAttempts = getIntValue(value, "-DownloadAttempts", 1, 255);
-                case "logstocksize" -> this.LogStockSize = getIntValue(value, "-LogStockSize", 0, Integer.MAX_VALUE);
+                case "threadcount" -> this.ThreadCount = InterpretationUtilities.getIntValue(value, "-ThreadCount", 1, 128);
+                case "downloadattempts" -> this.DownloadAttempts = InterpretationUtilities.getIntValue(value, "-DownloadAttempts", 1, 255);
+                case "logstocksize" -> this.LogStockSize = InterpretationUtilities.getIntValue(value, "-LogStockSize", 0, Integer.MAX_VALUE);
 
                 // Boolean Arguments
-                case "sizeverification" -> this.FileSizeVerification = getBooleanValue(value);
-                case "hashverification" -> this.HashVerification = getBooleanValue(value);
-                case "updater" -> this.UpdaterActive = getBooleanValue(value);
-                case "cache" -> this.CacheActive = getBooleanValue(value);
-                case "logger" -> this.LoggerActive = getBooleanValue(value);
-                case "stockpilelogs" -> this.StockpileLogs = getBooleanValue(value);
-                case "compresslogs" -> this.CompressStockPiledLogs = getBooleanValue(value);
-                case "settings" -> this.Settings = getBooleanValue(value);
-                case "defaultsettings" -> this.DefaultSettingsFromTemplate = getBooleanValue(value);
-                case "experimental" -> this.Experimental = getBooleanValue(value);
+                case "sizeverification" -> this.FileSizeVerification = InterpretationUtilities.getBooleanValue(value);
+                case "hashverification" -> this.HashVerification = InterpretationUtilities.getBooleanValue(value);
+                case "updater" -> this.UpdaterActive = InterpretationUtilities.getBooleanValue(value);
+                case "cache" -> this.CacheActive = InterpretationUtilities.getBooleanValue(value);
+                case "logger" -> this.LoggerActive = InterpretationUtilities.getBooleanValue(value);
+                case "stockpilelogs" -> this.StockpileLogs = InterpretationUtilities.getBooleanValue(value);
+                case "compresslogs" -> this.CompressStockPiledLogs = InterpretationUtilities.getBooleanValue(value);
+                case "settings" -> this.Settings = InterpretationUtilities.getBooleanValue(value);
+                case "defaultsettings" -> this.DefaultSettingsFromTemplate = InterpretationUtilities.getBooleanValue(value);
+                case "experimental" -> this.Experimental = InterpretationUtilities.getBooleanValue(value);
                 case "bypassnetworkcheck" -> this.BypassNetworkCheck = true;
 
                 // Custom
                 case "mode" -> {
                     value = value.toLowerCase(Locale.ROOT);
-                    if (!validateMode(value)) {
+                    if (!InterpretationUtilities.validateMode(value)) {
                         logger.print("Wrong mode selected!", 3);
                         logger.print("Available modes: CF-Pack // CF-Instance // Modrinth // Automatic", 3);
                         logger.print("Check my Github Page at https://github.com/Kanzaji/Cat-Downloader-Legacy for more details!", 3);
@@ -143,90 +143,19 @@ public class ArgumentDecoder {
     }
 
     /**
-     * Used to determine if provided {@link String} is one of the accepted Strings for boolean value.
-     * Defaults to {@code true} if incorrect String is passed.
-     * @param Value {@link String} with boolean value
-     * @return {@link Boolean} with the result of the check.
+     * This method is used to register arguments to {@link CommandRegistry}, can be launched only once.
      */
-    private boolean getBooleanValue(String Value) {
-        Value = Value.toLowerCase(Locale.ROOT);
-        return !(
-            Objects.equals(Value,"false") ||
-            Objects.equals(Value,"disabled") ||
-            Objects.equals(Value,"off") ||
-            Objects.equals(Value,"0")
-        );
-    }
+    public void registerArguments() {
+        if (registerLock) throw new IllegalStateException("Tried registering arguments for the second time!");
+        registerLock = true;
 
-    /**
-     * Used to parse {@link Integer} value from a {@link String}, and validate if it's contained in a specified threshold.
-     * @param Value {@link String} with Integer value to parse.
-     * @param Argument {@link String} with Name of the argument to provide in Exception.
-     * @param MinValue {@link Integer} with Minimal threshold for parsed Integer.
-     * @param MaxValue {@link Integer} with Maximal threshold for parsed Integer.
-     * @return {@link Integer} parsed from provided String.
-     * @throws IllegalArgumentException when parsed Integer is out of the provided threshold.
-     * @throws NumberFormatException when String doesn't contain Integer values!
-     */
-    private int getIntValue(String Value, String Argument, int MinValue, int MaxValue) throws IllegalArgumentException, NumberFormatException {
-        int IntValue;
-        try {
-            IntValue = Integer.parseInt(Value);
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException("Invalid String (" + Value + ") passed into the argument " + Argument + "!");
-        }
-        if (IntValue < MinValue || IntValue > MaxValue) {
-            throw new IllegalArgumentException(
-                "Value " +
-                ((IntValue < MinValue)? "below minimal": "above maximum") +
-                " threshold passed into the argument \"-" + Argument + "! " +
-                ((IntValue < MinValue)? "Minimal": "Maximal") +
-                " allowed value is " +
-                ((IntValue < MinValue)? MinValue: MaxValue)
-            );
-        }
-        return IntValue;
-    }
-
-    /**
-     * Used to validate if provided Path exists.
-     * @param path {@link String} with Path to validate.
-     * @param Argument {@link String} with Name of the argument to provide in Exception.
-     * @return {@link String} with provided Path, if it exists.
-     * @throws FileNotFoundException when provided Path doesn't exist.
-     */
-    private String validatePath(String path, String Argument, boolean override) throws FileNotFoundException, UnexpectedException {
-        Path ArgumentPath = Path.of(path);
-        if (!Files.exists(ArgumentPath)) {
-            if (override) {
-                FileUtils.createRequiredPath(ArgumentPath);
-                return path;
+        CR.registerArgument("workingdirectory", (value) -> {
+            try {
+                this.WorkingDirectory = InterpretationUtilities.validatePath(value, "-WorkingDirectory");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
-            logger.error("Specified " + Argument + " does not exists!");
-            logger.error(ArgumentPath.toAbsolutePath().toString());
-            throw new FileNotFoundException("Specified " + Argument + " does not exists!");
-        }
-        return path;
-    }
-
-    /**
-     * Used to validate if provided Path exists.
-     * @param path {@link String} with Path to validate.
-     * @param Argument {@link String} with Name of the argument to provide in Exception.
-     * @return {@link String} with provided Path, if it exists.
-     * @throws FileNotFoundException when provided Path doesn't exist.
-     */
-    private String validatePath(String path, String Argument) throws FileNotFoundException, UnexpectedException {
-        return validatePath(path, Argument, false);
-    }
-
-    /**
-     * Used to validate selected mode!
-     * @param Mode Mode to verify.
-     * @return boolean True when mode is available.
-     */
-    public static boolean validateMode(String Mode) {
-        return Arrays.asList(modes).contains(Mode);
+        });
     }
 
     /**
@@ -297,12 +226,15 @@ public class ArgumentDecoder {
     public void setCurrentMode(String mode) throws IllegalArgumentException {
         Objects.requireNonNull(mode);
         mode = mode.toLowerCase(Locale.ROOT);
-        if (!validateMode(mode) || Objects.equals(mode, "automatic")) throw new IllegalArgumentException("Tried to set invalid or automatic mode (" + mode + ")");
+        if (
+            !InterpretationUtilities.validateMode(mode) ||
+            Objects.equals(mode, "automatic")
+        ) throw new IllegalArgumentException("Tried to set invalid or automatic mode (" + mode + ")");
+
         this.Mode = mode;
     }
 
     // Just a spam of Get methods. Nothing spectacular to see here.
-    public String[] getAvailableModes() {return modes;}
     public String getCurrentMode() {return this.Mode;}
     public boolean isPackMode() {return Objects.equals(this.Mode, "cf-pack");}
     public boolean isInstanceMode() {return Objects.equals(this.Mode, "cf-instance");}
@@ -311,7 +243,8 @@ public class ArgumentDecoder {
     public String getWorkingDir() {return this.WorkingDirectory;}
     public String getSettingsPath() {return this.SettingsPath;}
     public String getLogPath() {return this.LogPath;}
-    public String getCachePath() {return this.CachePath;};
+    public String getCachePath() {return this.CachePath;}
+
     public int getDownloadAttempts() {return this.DownloadAttempts;}
     public int getThreads() {return this.ThreadCount;}
     public int getLogStockSize() {return this.LogStockSize;}

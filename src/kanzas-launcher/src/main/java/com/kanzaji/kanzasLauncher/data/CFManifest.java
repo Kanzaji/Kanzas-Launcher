@@ -45,7 +45,7 @@ import java.util.*;
  */
 @SuppressWarnings("unused")
 public class CFManifest {
-    public static LinkedList<String> DataGatheringWarnings = new LinkedList<>();
+    public static final LinkedList<String> DataGatheringWarnings = new LinkedList<>();
     public String author;
     public String name;
     public String version;
@@ -263,8 +263,8 @@ public class CFManifest {
             this.id = modLoaderID;
             this.primary = primaryModLoader;
         }
-        public String id;
-        public boolean primary;
+        public final String id;
+        public final boolean primary;
     }
 
     @SuppressWarnings("MismatchedReadAndWriteOfArray")

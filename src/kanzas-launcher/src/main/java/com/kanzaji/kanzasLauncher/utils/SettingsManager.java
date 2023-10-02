@@ -47,7 +47,7 @@ import java.io.IOException;
 
 /**
  * <h3>Class Description</h3>
- * SettingsManager is a class used to manage, create, update and load Settings file for Cat-Downloader.
+ * SettingsManager is a class used to manage, create, update and load Settings file for Kanza's Launcher.
  * <h3>Adding new key to Settings file</h3>
  * <ul>
  *     <li>Add new key to {@code settings.json5} file in the assets folder.</li>
@@ -64,9 +64,12 @@ import java.io.IOException;
  *     <li>If Required, add special handler in {@link SettingsManager#parseSettings()}.</li>
  *     <li>If Required, add special handler in {@link SettingsManager#validateSettings(Settings)}.</li>
  * </ul>
+ *
+ * NOTE: {@link ArgumentDecoder} is being deprecated and reworked. For steps used to add new Arguments, use {@link com.kanzaji.kanzasLauncher.CommandRegistry} instead.
  * @see SettingsManager#initSettings()
  * @see SettingsManager#getSettings()
  * @see SettingsManager#updateSettings(Settings)
+ * @apiNote This class is going to be worked when GUI is going to be functional! Comment compatibility isn't required nor useful with GUI to change setting values.
  */
 public class SettingsManager {
     private static final LoggerCustom logger = new LoggerCustom("SettingsManager");
@@ -212,7 +215,7 @@ public class SettingsManager {
         List<String> errors = new LinkedList<>();
         if (Objects.isNull(SettingsData.mode)) {
             errors.add("Mode is null! Available modes are: CF-Pack // CF-Instance // Modrinth // Automatic");
-        } else if (!ArgumentDecoder.validateMode(SettingsData.mode.toLowerCase(Locale.ROOT))) {
+        } else if (!InterpretationUtilities.validateMode(SettingsData.mode.toLowerCase(Locale.ROOT))) {
             errors.add("Mode: " + SettingsData.mode + " is not correct! Available modes are: CF-Pack // CF-Instance // Modrinth // Automatic");
         }
         if (Objects.isNull(SettingsData.workingDirectory)) {

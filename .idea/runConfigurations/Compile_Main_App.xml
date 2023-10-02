@@ -14,7 +14,7 @@
               <option value="compile" />
               <option value="assembly:single" />
               <option value="-pl" />
-              <option value=":Cat-Downloader-Legacy" />
+              <option value=":Kanzas-Launcher" />
             </list>
           </option>
           <option name="pomFileName" />
