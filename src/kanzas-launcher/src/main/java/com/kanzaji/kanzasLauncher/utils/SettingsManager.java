@@ -24,11 +24,12 @@
 
 package com.kanzaji.kanzasLauncher.utils;
 
-import com.kanzaji.kanzasLauncher.ArgumentDecoder;
+import com.kanzaji.kanzasLauncher.registry.ArgumentHandlerRegistry;
 import com.kanzaji.kanzasLauncher.data.Settings;
 import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
 import static com.kanzaji.kanzasLauncher.utils.RandomUtils.checkIfJsonObject;
 
+import com.kanzaji.kanzasLauncher.registry.CommandHandlerRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -52,20 +53,20 @@ import java.io.IOException;
  * <ul>
  *     <li>Add new key to {@code settings.json5} file in the assets folder.</li>
  *     <li>Add new key to {@link Settings#SettingsKeys} array and create new field with the name of the key.</li>
- *     <li>Add new field and get method to {@link ArgumentDecoder}.</li>
+ *     <li>Add new field and get method to {@link ArgumentHandlerRegistry}.</li>
  *     <li>Add key handlers to: <ul>
- *         <li>{@link ArgumentDecoder#loadFromSettings(Settings, boolean)}</li>
+ *         <li>{@link ArgumentHandlerRegistry#loadFromSettings(Settings, boolean)}</li>
  *         <li>{@link SettingsManager#generateSettingsFromARD()}</li>
  *         <li>{@link SettingsManager#saveSettings(Settings)}</li>
  *     </ul></li>
  * </ul><h3>Optional steps</h3>
  * <ul>
- *     <li>If key is not Settings exclusive, add Argument Handler to the {@link ArgumentDecoder#decodeArguments(String[])}.</li>
+ *     <li>If key is not Settings exclusive, add Argument Handler to the {@link ArgumentHandlerRegistry#decodeArguments(String[])}.</li>
  *     <li>If Required, add special handler in {@link SettingsManager#parseSettings()}.</li>
  *     <li>If Required, add special handler in {@link SettingsManager#validateSettings(Settings)}.</li>
  * </ul>
  *
- * NOTE: {@link ArgumentDecoder} is being deprecated and reworked. For steps used to add new Arguments, use {@link com.kanzaji.kanzasLauncher.CommandRegistry} instead.
+ * NOTE: {@link ArgumentHandlerRegistry} is being deprecated and reworked. For steps used to add new Arguments, use {@link CommandHandlerRegistry} instead.
  * @see SettingsManager#initSettings()
  * @see SettingsManager#getSettings()
  * @see SettingsManager#updateSettings(Settings)
@@ -74,7 +75,7 @@ import java.io.IOException;
 public class SettingsManager {
     private static final LoggerCustom logger = new LoggerCustom("SettingsManager");
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().setLenient().create();
-    private static final ArgumentDecoder ARD = ArgumentDecoder.getInstance();
+    private static final ArgumentHandlerRegistry ARD = ArgumentHandlerRegistry.getInstance();
     private static final Path SettingsFile = Path.of(ARD.getSettingsPath(),"Cat-Downloader-Legacy-Settings.json5");
     private static boolean SettingsInitialized = false;
     public static Settings.BlackList<String> ModBlackList = new Settings.BlackList<>();
@@ -82,7 +83,7 @@ public class SettingsManager {
     /**
      * Used to initialize {@link Settings}.
      * Creates a template of the Settings file, and sets everything up if argument `DefaultSettingsFromArguments` is true.
-     * @see ArgumentDecoder
+     * @see ArgumentHandlerRegistry
      */
     public static void initSettings() throws IOException {
         logger.log("Settings initialization started.");
@@ -134,7 +135,7 @@ public class SettingsManager {
     }
 
     /**
-     * Used to update Settings file and {@link ArgumentDecoder}.
+     * Used to update Settings file and {@link ArgumentHandlerRegistry}.
      * @param newSettingsData Settings object with new Settings configuration.
      * @throws IOException when IO Operation fails.
      * @throws IllegalArgumentException when failed to validate settings.
@@ -142,7 +143,7 @@ public class SettingsManager {
      * @see SettingsManager#initSettings()
      * @see SettingsManager#areSettingsInitialized()
      * @see SettingsManager#validateSettings(Settings)
-     * @see ArgumentDecoder#areSettingsEnabled()
+     * @see ArgumentHandlerRegistry#areSettingsEnabled()
      */
     public static void updateSettings(Settings newSettingsData) throws IOException, IllegalArgumentException, IllegalStateException {
         if (!areSettingsInitialized()) throw new IllegalStateException("Tried to update settings without initializing them!");
@@ -167,7 +168,7 @@ public class SettingsManager {
     public static boolean areSettingsInitialized() {return SettingsInitialized;}
 
     /**
-     * This method returns full Settings Object from {@link ArgumentDecoder} with parsed blacklist information.<br>
+     * This method returns full Settings Object from {@link ArgumentHandlerRegistry} with parsed blacklist information.<br>
      * @return {@link Settings} object with app configuration.
      * @apiNote This method <i>does not</i> return fresh information from a Settings file. For parsing new Data from a Settings File, call method {@link SettingsManager#refreshSettings()} before this one.
      * @see SettingsManager#refreshSettings()
@@ -252,8 +253,8 @@ public class SettingsManager {
     }
 
     /**
-     * Used to load settings into {@link ArgumentDecoder}.
-     * @param SettingsData {@link Settings} data to load into {@link ArgumentDecoder}.
+     * Used to load settings into {@link ArgumentHandlerRegistry}.
+     * @param SettingsData {@link Settings} data to load into {@link ArgumentHandlerRegistry}.
      */
     private static void loadSettings(Settings SettingsData) {
         logger.log("Loading Settings data to Argument Decoder...");
@@ -341,8 +342,8 @@ public class SettingsManager {
     }
 
     /**
-     * Generates {@link Settings} object from data in {@link ArgumentDecoder}.
-     * @return {@link Settings} with values from {@link ArgumentDecoder}.
+     * Generates {@link Settings} object from data in {@link ArgumentHandlerRegistry}.
+     * @return {@link Settings} with values from {@link ArgumentHandlerRegistry}.
      */
     private static @NotNull Settings generateSettingsFromARD() {
         logger.log("Generating settings file based out of argument values...");
@@ -367,7 +368,7 @@ public class SettingsManager {
     }
 
     /**
-     * Used to automatically generate, load and save {@link Settings} data from and to {@link ArgumentDecoder}.
+     * Used to automatically generate, load and save {@link Settings} data from and to {@link ArgumentHandlerRegistry}.
      * @throws IOException when IO Exception occurs at saving-to-file stage.
      */
     private static void saveSettingsFromARD() throws IOException {

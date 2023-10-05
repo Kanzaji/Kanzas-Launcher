@@ -24,7 +24,7 @@
 
 package com.kanzaji.kanzasLauncher.guis;
 
-import com.kanzaji.kanzasLauncher.ArgumentDecoder;
+import com.kanzaji.kanzasLauncher.registry.ArgumentHandlerRegistry;
 import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
 import com.kanzaji.kanzasLauncher.Updater;
 
@@ -167,7 +167,7 @@ public class UpdaterGUI {
                 JOptionPane.showOptionDialog(
                         null,
                         "Updates have been permanently disabled!\n If you want to re-enable them, go to your settings file (" +
-                                Path.of(ArgumentDecoder.getInstance().getSettingsPath()).toAbsolutePath() +
+                                Path.of(ArgumentHandlerRegistry.getInstance().getSettingsPath()).toAbsolutePath() +
                                 ") and change property \"Updater\" from false to true!",
                         "Cat-Downloader Legacy",
                         JOptionPane.DEFAULT_OPTION,

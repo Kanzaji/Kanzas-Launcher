@@ -24,7 +24,7 @@
 
 package com.kanzaji.kanzasLauncher.loggers;
 
-import com.kanzaji.kanzasLauncher.ArgumentDecoder;
+import com.kanzaji.kanzasLauncher.registry.ArgumentHandlerRegistry;
 import com.kanzaji.kanzasLauncher.utils.DateUtils;
 import com.kanzaji.kanzasLauncher.utils.FileUtils;
 
@@ -46,7 +46,7 @@ import java.util.stream.Stream;
  * @see LoggerCustom
  */
 class Logger implements ILogger {
-    private static final ArgumentDecoder ARD = ArgumentDecoder.getInstance();
+    private static final ArgumentHandlerRegistry ARD = ArgumentHandlerRegistry.getInstance();
     private static final class InstanceHolder {private static final Logger instance = new Logger();}
     private Logger() {}
     private boolean crashed = false;

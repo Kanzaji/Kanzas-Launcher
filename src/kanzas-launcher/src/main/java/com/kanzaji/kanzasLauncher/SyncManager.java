@@ -27,6 +27,7 @@ package com.kanzaji.kanzasLauncher;
 import com.kanzaji.kanzasLauncher.data.CDLInstance;
 import com.kanzaji.kanzasLauncher.data.CFManifest;
 import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
+import com.kanzaji.kanzasLauncher.registry.ArgumentHandlerRegistry;
 import com.kanzaji.kanzasLauncher.utils.FileUtils;
 import com.kanzaji.kanzasLauncher.utils.RandomUtils;
 import com.kanzaji.kanzasLauncher.utils.SettingsManager;
@@ -48,7 +49,7 @@ import static com.kanzaji.kanzasLauncher.KanzasLauncher.WORKPATH;
  */
 public class SyncManager {
     private static final LoggerCustom logger = new LoggerCustom("Sync Manager");
-    private static final ArgumentDecoder ARD = ArgumentDecoder.getInstance();
+    private static final ArgumentHandlerRegistry ARD = ArgumentHandlerRegistry.getInstance();
     private static Path CDLTemp;
     private final CDLInstance CDLInstanceData;
     private ExecutorService downloadExecutor;
@@ -389,7 +390,7 @@ public class SyncManager {
             System.out.println(
                 "\nFor more details, check your configuration file or the log at:\n" +
                 "\"" + logger.getLogPath() + "\"\n" +
-                "\"" + Path.of(ArgumentDecoder.getInstance().getSettingsPath()).toAbsolutePath() + "\\Cat-Downloader-Legacy-Settings.json5\""
+                "\"" + Path.of(ArgumentHandlerRegistry.getInstance().getSettingsPath()).toAbsolutePath() + "\\Cat-Downloader-Legacy-Settings.json5\""
             );
             System.out.println("---------------------------------------------------------------------");
         }

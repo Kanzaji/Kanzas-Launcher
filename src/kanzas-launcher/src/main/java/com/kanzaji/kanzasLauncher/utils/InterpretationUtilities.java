@@ -51,7 +51,7 @@ public class InterpretationUtilities {
      * @return Array with app modes
      * @deprecated Modes are deprecated, they are the past of Cat Downloader Legacy, what is not required in the Launcher version.
      */
-    public String[] getAvailableModes() {return modes;}
+    public static String[] getAvailableModes() {return modes;}
 
     /**
      * Used to determine if provided {@link String} is one of the accepted Strings for boolean value.

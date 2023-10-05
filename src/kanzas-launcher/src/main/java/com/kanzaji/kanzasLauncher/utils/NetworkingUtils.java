@@ -24,7 +24,7 @@
 
 package com.kanzaji.kanzasLauncher.utils;
 
-import com.kanzaji.kanzasLauncher.ArgumentDecoder;
+import com.kanzaji.kanzasLauncher.registry.ArgumentHandlerRegistry;
 import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
 import static com.kanzaji.kanzasLauncher.utils.FileVerUtils.verifyFile;
 
@@ -159,7 +159,7 @@ public class NetworkingUtils {
             if(NetworkingUtils.reDownload(File, FileSize, DownloadURL, FileName, Hash, Algorithm)) {
                 logger.log("Re-download of " + FileName + " was successful!");
             } else {
-                logger.critical("Re-download of " + FileName + " after " + ArgumentDecoder.getInstance().getDownloadAttempts() + " attempts failed!");
+                logger.critical("Re-download of " + FileName + " after " + ArgumentHandlerRegistry.getInstance().getDownloadAttempts() + " attempts failed!");
                 return false;
             }
         } else {
@@ -217,7 +217,7 @@ public class NetworkingUtils {
         boolean hashVerification = Objects.nonNull(Hash) && Objects.nonNull(Algorithm);
         if (Objects.isNull(fileName)) fileName = file.getFileName().toString();
 
-        for (int i = 0; i < ArgumentDecoder.getInstance().getDownloadAttempts(); i++) {
+        for (int i = 0; i < ArgumentHandlerRegistry.getInstance().getDownloadAttempts(); i++) {
             // Waiting a while, in case server has some small issue and requires a bit of time, Each attempt increases the time to wait.
             //noinspection BusyWait
             Thread.sleep(2500L * i);

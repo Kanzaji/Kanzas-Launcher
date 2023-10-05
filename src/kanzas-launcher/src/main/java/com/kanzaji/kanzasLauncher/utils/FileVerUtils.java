@@ -24,7 +24,7 @@
 
 package com.kanzaji.kanzasLauncher.utils;
 
-import com.kanzaji.kanzasLauncher.ArgumentDecoder;
+import com.kanzaji.kanzasLauncher.registry.ArgumentHandlerRegistry;
 import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
 import org.jetbrains.annotations.NotNull;
 
@@ -99,7 +99,7 @@ public class FileVerUtils {
      * @throws IOException when IO Operation fails.
      */
     public static boolean verifyFileSize(Path File, int Size) throws IOException {
-        if (!ArgumentDecoder.getInstance().isFileSizeVerActive()) {
+        if (!ArgumentHandlerRegistry.getInstance().isFileSizeVerActive()) {
             return true;
         }
         return Files.size(File) == Size;
@@ -114,7 +114,7 @@ public class FileVerUtils {
      * @throws NoSuchAlgorithmException when Hash Verification complains about Algorithm.
      */
     public static boolean verifyHash(Path File, String Hash, String Algorithm) throws IOException, NoSuchAlgorithmException {
-        if (!ArgumentDecoder.getInstance().isHashVerActive()) {
+        if (!ArgumentHandlerRegistry.getInstance().isHashVerActive()) {
             return true;
         }
         return Objects.equals(getHash(File, Algorithm), Hash);
@@ -129,7 +129,7 @@ public class FileVerUtils {
      * @throws NoSuchAlgorithmException when Hash Verification complains about Algorithm for some reason.
      */
     public static boolean verifyHash(Path File, String DownloadURL) throws IOException, NoSuchAlgorithmException {
-        if (!ArgumentDecoder.getInstance().isHashVerActive()) {
+        if (!ArgumentHandlerRegistry.getInstance().isHashVerActive()) {
             return true;
         }
         return Objects.equals(getHash(File), getHash(DownloadURL));

@@ -24,7 +24,7 @@
 
 package com.kanzaji.kanzasLauncher.data;
 
-import com.kanzaji.kanzasLauncher.ArgumentDecoder;
+import com.kanzaji.kanzasLauncher.registry.ArgumentHandlerRegistry;
 import com.kanzaji.kanzasLauncher.exceptions.UnknownFormatException;
 import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
 import com.kanzaji.kanzasLauncher.utils.FileUtils;
@@ -466,7 +466,7 @@ public class CDLInstance {
         //TODO: Create new getData() method. Replace use of Deprecated method.
         // Additionally make use of multithreading and experimental option.
         ModFile mod = this.files[index];
-        if (!ArgumentDecoder.getInstance().isPackMode() || !Objects.equals(mod.fileName, "CF-PACK_MOD")) return;
+        if (!ArgumentHandlerRegistry.getInstance().isPackMode() || !Objects.equals(mod.fileName, "CF-PACK_MOD")) return;
 
         CFManifest.minecraft CFminecraft = new CFManifest.minecraft();
         CFminecraft.version = this.minecraftData.version;

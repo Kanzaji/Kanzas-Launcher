@@ -31,6 +31,7 @@ import com.kanzaji.kanzasLauncher.exceptions.FormatVersionMismatchException;
 import com.kanzaji.kanzasLauncher.guis.GUIUtils;
 import com.kanzaji.kanzasLauncher.data.CFMinecraftInstance;
 import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
+import com.kanzaji.kanzasLauncher.registry.ArgumentHandlerRegistry;
 import com.kanzaji.kanzasLauncher.utils.*;
 
 import com.google.gson.Gson;
@@ -49,7 +50,7 @@ public final class KanzasLauncher {
     // Launch fresh instances of required utilities.
     private static final LoggerCustom logger = new LoggerCustom("Main");
     private static final Gson gson = new Gson();
-    static final ArgumentDecoder ARD = ArgumentDecoder.getInstance();
+    static final ArgumentHandlerRegistry ARD = ArgumentHandlerRegistry.getInstance();
 
     // Global variables
     public static final String VERSION = "0.0.1-DEVELOP";

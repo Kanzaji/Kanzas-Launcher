@@ -22,7 +22,7 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.kanzasLauncher;
+package com.kanzaji.kanzasLauncher.registry;
 
 import com.kanzaji.kanzasLauncher.data.Settings;
 import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
@@ -33,16 +33,14 @@ import org.jetbrains.annotations.NotNull;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.rmi.UnexpectedException;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 
-public class ArgumentDecoder {
-    private static final LoggerCustom logger = new LoggerCustom("Argument Decoder");
-    private static final CommandRegistry CR = CommandRegistry.getInstance();
-    private static final class InstanceHolder {private static final ArgumentDecoder instance = new ArgumentDecoder();}
-    private static boolean registerLock = false;
-    private ArgumentDecoder() {}
+public class ArgumentHandlerRegistry implements IHandlerRegistry {
+    private static final LoggerCustom logger = new LoggerCustom("Argument Registry");
+    private static final CommandHandlerRegistry cmdReg = CommandHandlerRegistry.getInstance();
+    private static final class InstanceHolder {private static final ArgumentHandlerRegistry instance = new ArgumentHandlerRegistry();}
+    private ArgumentHandlerRegistry() {}
     private String WorkingDirectory = "";
     private String SettingsPath = "";
     private String LogPath = "";
@@ -62,22 +60,120 @@ public class ArgumentDecoder {
     private boolean DefaultSettingsFromTemplate = true;
     private boolean Experimental = false;
     private boolean BypassNetworkCheck = false;
+    private final HashMap<String, Consumer<String>> registeredElements = new HashMap<>();
 
     /**
-     * Used to get a reference to {@link ArgumentDecoder} instance.
+     * Used to get a reference to {@link ArgumentHandlerRegistry} instance.
      *
-     * @return ArgumentDecoder with reference to the single instance of it.
+     * @return ArgumentHandlerRegistry with reference to the single instance of it.
      */
-    public static ArgumentDecoder getInstance() {
+    public static ArgumentHandlerRegistry getInstance() {
         return InstanceHolder.instance;
     }
 
+
     /**
-     * Decodes all arguments passed to the program, and saves necessary data in the instance of the ArgumentDecoder.
+     * Used to get {@code HashSet<String>} with currently registered elements.
+     * Does *not* return references to the handlers itself.
+     * @return new {@code HashSet<String>} with all registered elements of this registry.
+     */
+    @Override
+    public HashSet<String> getRegisteredElements() {
+        HashSet<String> elements = new HashSet<>();
+        this.registeredElements.forEach((command, __) -> elements.add(command));
+        return elements;
+    }
+
+    /**
+     * Used to register new argument handlers to the ArgumentHandlerRegistry.
+     * Argument names are Case-inSensitive and can <i>not</i> contain spaces.
+     * Multiple value arguments are required to be handled at the handler level.
+     * @param argument Argument name.
+     * @param argumentHandler Consumer used to handle the argument, with String value as an input.
+     * @throws NullPointerException when Command name or CommandHandler are null.
+     * @throws IllegalArgumentException when Command name contains spaces.
+     */
+    @Override
+    public void register(@NotNull String argument, @NotNull Consumer<String> argumentHandler) throws NullPointerException, IllegalArgumentException {
+        Objects.requireNonNull(argument);
+        Objects.requireNonNull(argumentHandler);
+        if (argument.contains(" ")) {throw new IllegalArgumentException("Passed argument (\"" + argument + "\") contains illegal values!");}
+
+        argument = argument.startsWith("-") ?
+                argument.toLowerCase(Locale.ROOT).replaceFirst("-", "") :
+                argument.toLowerCase(Locale.ROOT);
+        registeredElements.put(argument, argumentHandler);
+        logger.log("Successfully registered argument handler for: " + argument);
+    }
+
+    /**
+     * Used to decode a String with an argument. Argument schema: "ArgumentName:Value"
+     * @param lineToDecode String with an argument to decode.
+     * @return String with either an Error message, or CMD::ArgumentName Value if passed line contained command, or null if Decoding was successful or handler was not found.
+     */
+    @Override
+    public String decode(@NotNull String lineToDecode) {
+        String[] splitArgument = lineToDecode.split(":", 2);
+        String argument = splitArgument[0].startsWith("-") ?
+                splitArgument[0].toLowerCase(Locale.ROOT).replaceFirst("-", "") :
+                splitArgument[0].toLowerCase(Locale.ROOT);
+        String value = (splitArgument.length > 1)? splitArgument[1]: "";
+
+        if (registeredElements.containsKey(argument)) {
+            try {
+                registeredElements.get(argument).accept(value);
+            } catch (Exception e) {
+                String msg = "Exception thrown while decoding argument \"" + argument + "\" with value \"" + value + "\"!";
+                logger.logStackTrace(msg, e);
+                return msg;
+            }
+        } else if (cmdReg.getRegisteredElements().contains(argument)) {
+            if (cmdReg.getBlacklistedElements().contains(argument)) {
+                String msg = "Startup command found, however this command is blacklisted from the startup execution.";
+                logger.warn(msg);
+                return msg;
+            }
+            logger.log("Startup command found! It will be executed after full argument decoding.");
+            return "CMD::" + argument + value;
+        }
+
+        return null;
+    }
+
+    /**
+     * Used to decode all arguments passed to the program, and triggers registered handlers for each argument.
+     * @param arguments String array with arguments of the app.
+     * @param ignored Temporary boolean to change Signature of the method, until ArgReg isn't ready.
+     */
+    public boolean decodeArguments(String @NotNull [] arguments, boolean ignored) {
+        Objects.requireNonNull(arguments);
+
+        logger.log("Decoding arguments:");
+        Arrays.stream(arguments).toList().forEach(logger::log);
+
+        HashSet<String> commands = new HashSet<>();
+
+        for (String fullArgument : arguments) {
+            String value = this.decode(fullArgument);
+            if (Objects.nonNull(value)) {
+                if (value.startsWith("CMD::")) {
+                    commands.add(value.substring(value.indexOf("CMD::")));
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        commands.forEach(cmdReg::decode);
+        return true;
+    }
+
+    /**
+     * Decodes all arguments passed to the program, and saves necessary data in the instance of the ArgumentHandlerRegistry.
      * @param arguments String[] with arguments passed to the program.
-     * @deprecated ArgumentDecoder is planned for a rework.
-     * Use {@link CommandRegistry#decodeArguments(String[])} for a decoding of argument list,
-     * and {@link CommandRegistry#registerArgument(String, Consumer)} for registering argument handlers.
+     * @deprecated ArgumentHandlerRegistry is planned for a rework.
+     * Use {@link ArgumentHandlerRegistry#decodeArguments(String[])} for a decoding of argument list,
+     * and {@link ArgumentHandlerRegistry#register(String, Consumer)} for registering argument handlers.
      * This method is left until all arguments are transferred over to the new system.
      */
     @Deprecated(since = "0.1-DEV", forRemoval = true)
@@ -143,23 +239,7 @@ public class ArgumentDecoder {
     }
 
     /**
-     * This method is used to register arguments to {@link CommandRegistry}, can be launched only once.
-     */
-    public void registerArguments() {
-        if (registerLock) throw new IllegalStateException("Tried registering arguments for the second time!");
-        registerLock = true;
-
-        CR.registerArgument("workingdirectory", (value) -> {
-            try {
-                this.WorkingDirectory = InterpretationUtilities.validatePath(value, "-WorkingDirectory");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    /**
-     * Prints entire {@link ArgumentDecoder} Configuration to a log file.
+     * Prints entire {@link ArgumentHandlerRegistry} Configuration to a log file.
      */
     public void printConfiguration(String message) {
         logger.log("---------------------------------------------------------------------");
@@ -244,7 +324,6 @@ public class ArgumentDecoder {
     public String getSettingsPath() {return this.SettingsPath;}
     public String getLogPath() {return this.LogPath;}
     public String getCachePath() {return this.CachePath;}
-
     public int getDownloadAttempts() {return this.DownloadAttempts;}
     public int getThreads() {return this.ThreadCount;}
     public int getLogStockSize() {return this.LogStockSize;}

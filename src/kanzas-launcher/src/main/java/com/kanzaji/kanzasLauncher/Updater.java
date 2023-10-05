@@ -27,6 +27,7 @@ package com.kanzaji.kanzasLauncher;
 import com.kanzaji.kanzasLauncher.data.Settings;
 import com.kanzaji.kanzasLauncher.loggers.LoggerCustom;
 import com.kanzaji.kanzasLauncher.guis.UpdaterGUI;
+import com.kanzaji.kanzasLauncher.registry.ArgumentHandlerRegistry;
 import com.kanzaji.kanzasLauncher.utils.*;
 
 import static com.kanzaji.kanzasLauncher.KanzasLauncher.*;
@@ -59,7 +60,7 @@ public class Updater {
     private static final String GithubAPIUrl = "https://api.github.com/repos/" + REPOSITORY.replaceFirst("https://github.com/", "");
     private static final Gson gson = new Gson();
     private static final LoggerCustom logger = new LoggerCustom("Updater");
-    private static final ArgumentDecoder ARD = ArgumentDecoder.getInstance();
+    private static final ArgumentHandlerRegistry ARD = ArgumentHandlerRegistry.getInstance();
     /**
      * Determines if user has already selected any option from the UpdaterGUI prompt.
      */
