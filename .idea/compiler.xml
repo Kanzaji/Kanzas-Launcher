@@ -11,6 +11,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="Cat-Downloader-Legacy-Main-Project" target="17" />
       <module name="catdownloaderlegacy" target="17" />
       <module name="Kanza's-Launcher" target="17" />
     </bytecodeTargetLevel>
