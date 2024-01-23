@@ -1,7 +1,7 @@
 /**************************************************************************************
  * MIT License                                                                        *
  *                                                                                    *
- * Copyright (c) 2023. Kanzaji                                                        *
+ * Copyright (c) 2023-2024. Kanzaji                                                   *
  *                                                                                    *
  * Permission is hereby granted, free of charge, to any person obtaining a copy       *
  * of this software and associated documentation files (the "Software"), to deal      *
@@ -54,7 +54,10 @@ public class Logger implements ILogger, IService {
     /**
      * Used to get an instance of the Logger.
      * @return Reference to an instance of the Logger.
+     * @apiNote This was changed to PROTECTED due to rework of the logging service for use with {@link ServiceManager},
+     * use ServiceManager to access the logger instead.
      */
+    //TODO: Finish rework of the logger.
     public static Logger getInstance() {
         return InstanceHolder.instance;
     }

@@ -52,8 +52,4 @@ public class CLIHandler implements IService {
     public void init() throws Throwable {
 
     }
-
-    public boolean isConsole() {
-        return console != null;
-    }
 }

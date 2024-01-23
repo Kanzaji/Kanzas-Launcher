@@ -24,10 +24,15 @@
 
 package com.kanzaji.kanzaslauncher.services;
 
+import com.kanzaji.kanzaslauncher.services.configuration.ConfigurationKey;
+import com.kanzaji.kanzaslauncher.services.configuration.ConfigurationService;
+
+import java.nio.file.Path;
+
 public enum Services {
     // Services enum, for easier access to services when needed.
     LOGGER(Logger.getInstance().getName()),
-    CONFIG("Configuration Service"),
+    CONFIG("Main Configuration Service"),
     CLI("CLI Handler");
 
     // Fields used by ServiceManager to get services.
@@ -46,7 +51,13 @@ public enum Services {
      */
     public static void registerServices() {
         ServiceManager.registerService(Logger.getInstance());
-        ServiceManager.registerService(new ConfigurationService());
+
+        ConfigurationService mainCFG = new ConfigurationService("Main Configuration Service", Path.of("Kanza's-Launcher Config.json5"));
+        ServiceManager.registerService(mainCFG);
+        mainCFG.registerKey(new ConfigurationKey("App-Mode", "CLI", "mode", "Sets mode of the application. Can be: CLI / GUI"));
+        mainCFG.registerKey(new ConfigurationKey("Test1", "", "2", "test"));
+        mainCFG.registerKey(new ConfigurationKey("Test2", "", "1", "test2"));
+
         ServiceManager.registerService(new CLIHandler());
     }
 }

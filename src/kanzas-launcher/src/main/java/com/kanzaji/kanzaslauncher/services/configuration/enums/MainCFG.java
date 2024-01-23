@@ -1,7 +1,7 @@
 /**************************************************************************************
  * MIT License                                                                        *
  *                                                                                    *
- * Copyright (c) 2023. Kanzaji                                                        *
+ * Copyright (c) 2024. Kanzaji                                                        *
  *                                                                                    *
  * Permission is hereby granted, free of charge, to any person obtaining a copy       *
  * of this software and associated documentation files (the "Software"), to deal      *
@@ -22,34 +22,28 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.kanzaslauncher.services;
+package com.kanzaji.kanzaslauncher.services.configuration.enums;
 
-import java.util.List;
-import com.kanzaji.kanzaslauncher.services.ServiceManager.State;
+import com.kanzaji.kanzaslauncher.services.ServiceManager;
+import com.kanzaji.kanzaslauncher.services.Services;
+import com.kanzaji.kanzaslauncher.services.configuration.ConfigurationService;
 
-public class ConfigurationService implements IService {
-
-    @Override
-    public String getName() {
-        return "Configuration Service";
-    }
+public enum MainCFG {
 
     /**
-     * Used to get lists of implemented phases.
-     * Only phases mentioned in a returned list are executed, even if implemented.
-     * @return List with implemented initialization phases.
+     * Holds information about the mode of the app. Can be CLI or GUI.
+     * @apiNote Class: {@link String}
      */
-    @Override
-    public List<ServiceManager.State> getPhases() {
-        return List.of(State.INIT, State.PRE_INIT, State.POST_INIT);
+    MODE("App-Mode");
+
+    // Fields and Methods.
+    public final String name;
+    MainCFG(String name) {
+        this.name = name;
     }
 
-    @Override
-    public void preInit() {}
-
-    @Override
-    public void init() {}
-
-    @Override
-    public void postInit() {}
+    @SuppressWarnings("unchecked")
+    public <T> T getValue() {
+        return (T) ServiceManager.<ConfigurationService>get(Services.CONFIG).getValue(this.name);
+    }
 }

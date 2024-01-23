@@ -1,7 +1,7 @@
 /**************************************************************************************
  * MIT License                                                                        *
  *                                                                                    *
- * Copyright (c) 2023. Kanzaji                                                        *
+ * Copyright (c) 2023-2024. Kanzaji                                                   *
  *                                                                                    *
  * Permission is hereby granted, free of charge, to any person obtaining a copy       *
  * of this software and associated documentation files (the "Software"), to deal      *
@@ -25,8 +25,13 @@
 package com.kanzaji.kanzaslauncher;
 
 import com.kanzaji.kanzaslauncher.services.*;
+import com.kanzaji.kanzaslauncher.services.configuration.ConfigurationService;
+import com.kanzaji.kanzaslauncher.services.configuration.enums.MainCFG;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class KanzasLauncher {
     public static final String VERSION = "0.0.1-DEVELOP";
@@ -34,17 +39,20 @@ public class KanzasLauncher {
     public static final boolean DEVELOP = VERSION.endsWith("DEVELOP");
     @SuppressWarnings("ConstantConditions")
     public static final boolean SNAPSHOT = VERSION.endsWith("SNAPSHOT");
+    public static final List<String> ARGUMENTS = new ArrayList<>();
     private static final LoggerCustom logger = new LoggerCustom("Main");
 
     public static void main(String[] args) {
+        ARGUMENTS.addAll(Arrays.stream(args).toList());
         try {
             logger.log("Kanza's launcher " + VERSION);
             Services.registerServices();
 
             ServiceManager.runPreInit();
-
-            // For some reason, the console object is null when running this from IntelliJ
-            if (!ServiceManager.<CLIHandler>get(Services.CLI).isConsole() && !DEVELOP) {
+            ServiceManager.runInit();
+            // For some reason, the console object is null when running this from IntelliJ. When running in IntelliJ, add -ForceConsole argument.
+            // @see https://youtrack.jetbrains.com/issue/IDEA-18814/IDEA-doesnt-work-with-System.console
+            if (!MainCFG.MODE.<String>getValue().equals("CLI")) {
                 try {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 } catch (Exception e) {
@@ -52,17 +60,15 @@ public class KanzasLauncher {
                 }
 
                 JOptionPane.showConfirmDialog(
-                    null,
-                    "Kanza's Launcher GUI is W.I.P. Please launch the application from the Command line for usage of CLI.",
-                    "Kanza's Launcher",
-                    JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.ERROR_MESSAGE
+                        null,
+                        "Kanza's Launcher GUI is W.I.P. Please launch the application from the Command line for usage of CLI.",
+                        "Kanza's Launcher",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.ERROR_MESSAGE
                 );
 
                 throw new IllegalStateException("GUI mode is WIP.");
             }
-
-            ServiceManager.runInit();
             ServiceManager.runPostInit();
             ServiceManager.runExit();
         } catch (Throwable e) {

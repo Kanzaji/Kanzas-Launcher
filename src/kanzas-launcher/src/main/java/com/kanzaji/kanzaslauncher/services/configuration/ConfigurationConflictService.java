@@ -1,7 +1,7 @@
 /**************************************************************************************
  * MIT License                                                                        *
  *                                                                                    *
- * Copyright (c) 2023-2024. Kanzaji                                                   *
+ * Copyright (c) 2024. Kanzaji                                                        *
  *                                                                                    *
  * Permission is hereby granted, free of charge, to any person obtaining a copy       *
  * of this software and associated documentation files (the "Software"), to deal      *
@@ -22,53 +22,55 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.catdownloaderlegacy.guis;
+package com.kanzaji.kanzaslauncher.services.configuration;
 
-import com.kanzaji.catdownloaderlegacy.loggers.LoggerCustom;
-
-import org.jetbrains.annotations.Contract;
+import com.kanzaji.kanzaslauncher.services.IService;
+import com.kanzaji.kanzaslauncher.services.LoggerCustom;
+import com.kanzaji.kanzaslauncher.services.ServiceManager;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
- * This class holds utility methods related to GUI.
+ * ConfigurationConflictService is used to prevent conflicts between different Configuration Services, and prevent issues with accidental overlapping configuration keys.
  */
-public class GUIUtils {
-    private static final LoggerCustom logger = new LoggerCustom("GUI Utilities");
+public class ConfigurationConflictService implements IService {
+    private static final LoggerCustom logger = new LoggerCustom("Configuration Conflict Prevention Service");
 
-    /**
-     * This method is used to set LookAndFeel of GUI's to the system one.
-     */
-    public static void setLookAndFeel() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            logger.logStackTrace("Look And Feel not available! Going back to default.", e);
-        }
+    private static final List<ConfigurationService> CFGServices = new ArrayList<>();
+
+    protected static void addService(@NotNull ConfigurationService service) {
+        CFGServices.add(Objects.requireNonNull(service));
     }
 
-    private static int gWidth = 1;
-    private static int gHeight = 1;
+    @Override
+    public String getName() {
+        return "Configuration Conflict Prevention Service";
+    }
+
     /**
-     * This method is used to update static variables for the Width and Height of the user display.
+     * Used to get lists of implemented phases.
+     * Only phases mentioned in a returned list are executed, even if implemented.
+     *
+     * @return List with implemented initialization phases.
      */
-    public static void updateResolutionInformation() {
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        gWidth = gd.getDisplayMode().getWidth();
-        gHeight = gd.getDisplayMode().getHeight();
+    @Override
+    public List<ServiceManager.State> getPhases() {
+        return List.of(ServiceManager.State.POST_INIT);
     }
-    @Contract(pure = true)
-    public static int getScreenWidth() {
-        return gWidth;
-    }
-    @Contract(pure = true)
-    public static int getScreenHeight() {
-        return gHeight;
-    }
-    @Contract(value = " -> new", pure = true)
-    public static @NotNull Dimension getScreenDimension() {
-        return new Dimension(gWidth, gHeight);
+
+    /**
+     * Used for PostInit phase of the service.
+     *
+     * @throws Throwable Possible exception from the PostInit phase.
+     */
+    @Override
+    public void postInit() throws Throwable {
+        logger.log("Scanning Configuration services for potential conflicts...");
+        CFGServices.forEach(service -> {
+
+        });
     }
 }

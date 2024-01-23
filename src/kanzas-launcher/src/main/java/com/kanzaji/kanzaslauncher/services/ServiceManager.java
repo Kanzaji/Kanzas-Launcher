@@ -1,7 +1,7 @@
 /**************************************************************************************
  * MIT License                                                                        *
  *                                                                                    *
- * Copyright (c) 2023. Kanzaji                                                        *
+ * Copyright (c) 2023-2024. Kanzaji                                                   *
  *                                                                                    *
  * Permission is hereby granted, free of charge, to any person obtaining a copy       *
  * of this software and associated documentation files (the "Software"), to deal      *
@@ -84,6 +84,14 @@ public class ServiceManager {
     }
 
     /**
+     * Used to get current status of Service Initialization.
+     * @return Status of the ServiceManager.
+     */
+    public static State getStatus() {
+        return status;
+    }
+
+    /**
      * Used to register the Service to Service Manager.
      * @throws IllegalStateException when the State of ServiceManager is POST_INIT or Service with specified name already is registered.
      * @param service Object implementing IService to register.
@@ -114,10 +122,14 @@ public class ServiceManager {
     }
 
     public static void runCrash() {
-        runStage(State.CRASH, null);
+        runStage(State.CRASH, null, true);
     }
 
     private static void runStage(@NotNull State stage, @Nullable State requiredStage) {
+        runStage(stage, requiredStage, false);
+    }
+
+    private static void runStage(@NotNull State stage, @Nullable State requiredStage, boolean ignoreExceptions) {
         if (Objects.nonNull(requiredStage) && status != requiredStage) throw new IllegalStateException("Can't run " + stage + " of services when status is " + status);
         status = stage;
         services.forEach((name, service) -> {
@@ -133,7 +145,11 @@ public class ServiceManager {
                     default -> throw new IllegalArgumentException("NOT_INIT can't be passed as Stage argument!");
                 }
             } catch (Throwable e) {
-                throw new RuntimeException("Failed " + stage + " of service: " + name + "! Service Initialization exceptions are considered FATAL.", e);
+                if (ignoreExceptions) {
+                    logger.logStackTrace("Failed " + stage + " of service: " + name + "! This exception is being ignored, but it might cause issues later on!", e);
+                } else {
+                    throw new RuntimeException("Failed " + stage + " of service: " + name + "! Service Initialization exceptions are considered FATAL.", e);
+                }
             }
         });
         logger.log(stage + " phase of Services finished.");
