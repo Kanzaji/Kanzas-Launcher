@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * Configuration key is used to register new configuration keys to any of the {@link ConfigurationService}s.
@@ -37,6 +38,7 @@ public class ConfigurationKey {
     private final String argument;
     private final String desc;
     private final Class<?> valClass;
+    private final Supplier<Object> defaultValue;
     private Object value;
 
     /**
@@ -46,11 +48,12 @@ public class ConfigurationKey {
      * @param argument Not Required. Used to add possibility to change value with use of the application arguments.
      * @param description Not Required. Used to add description in the configuration file of that key.
      */
-    public ConfigurationKey(@NotNull String registryName, @NotNull Object defaultValue, @Nullable String argument, @Nullable String description) {
+    public ConfigurationKey(@NotNull String registryName, @NotNull Supplier<Object> defaultValue, @Nullable String argument, @Nullable String description) {
         this.registry = registryName;
         this.argument = argument;
         this.desc = description;
-        this.value = defaultValue;
+        this.value = defaultValue.get();
+        this.defaultValue = defaultValue;
         this.valClass = value.getClass();
     }
 
@@ -81,6 +84,14 @@ public class ConfigurationKey {
      */
     public Object getValue() {
         return value;
+    }
+
+    /**
+     * Used to generate default value of this configuration key.
+     * @return Object returned by default value supplier.
+     */
+    public Object getDefault() {
+        return this.defaultValue.get();
     }
 
     /**

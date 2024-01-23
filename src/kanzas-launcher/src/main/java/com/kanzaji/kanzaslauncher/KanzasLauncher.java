@@ -32,6 +32,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class KanzasLauncher {
     public static final String VERSION = "0.0.1-DEVELOP";
@@ -43,16 +44,17 @@ public class KanzasLauncher {
     private static final LoggerCustom logger = new LoggerCustom("Main");
 
     public static void main(String[] args) {
-        ARGUMENTS.addAll(Arrays.stream(args).toList());
+        ARGUMENTS.addAll(Arrays.stream(args).map(arg -> arg.toLowerCase(Locale.ROOT)).toList());
         try {
             logger.log("Kanza's launcher " + VERSION);
             Services.registerServices();
 
             ServiceManager.runPreInit();
             ServiceManager.runInit();
+
             // For some reason, the console object is null when running this from IntelliJ. When running in IntelliJ, add -ForceConsole argument.
             // @see https://youtrack.jetbrains.com/issue/IDEA-18814/IDEA-doesnt-work-with-System.console
-            if (!MainCFG.MODE.<String>getValue().equals("CLI")) {
+            if (MainCFG.isGUI()) {
                 try {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 } catch (Exception e) {
@@ -69,6 +71,7 @@ public class KanzasLauncher {
 
                 throw new IllegalStateException("GUI mode is WIP.");
             }
+
             ServiceManager.runPostInit();
             ServiceManager.runExit();
         } catch (Throwable e) {

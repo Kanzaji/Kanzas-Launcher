@@ -46,4 +46,8 @@ public enum MainCFG {
     public <T> T getValue() {
         return (T) ServiceManager.<ConfigurationService>get(Services.CONFIG).getValue(this.name);
     }
+
+    // Static helper methods.
+    public static boolean isConsole() {return MODE.getValue().equals("CLI");}
+    public static boolean isGUI() {return !isConsole();}
 }

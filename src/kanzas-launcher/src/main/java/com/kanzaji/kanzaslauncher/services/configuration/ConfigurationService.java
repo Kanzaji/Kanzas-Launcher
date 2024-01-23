@@ -52,8 +52,8 @@ public class ConfigurationService implements IService {
     }
 
     public void registerKey(@NotNull ConfigurationKey key) {
-        if (ServiceManager.getStatus() != State.NOT_INIT && ServiceManager.getStatus() != State.PRE_INIT) {
-            throw new IllegalStateException("Can't register new configuration keys after PRE_INIT!");
+        if (ServiceManager.getStatus() != State.NOT_INIT) {
+            throw new IllegalStateException("Registration of new Keys has to be done before PRE_INIT!");
         }
         if (keys.containsKey(Objects.requireNonNull(key, "Can't register null key!").getName())) {
             throw new IllegalArgumentException("A key is already registered under specified name!");
@@ -112,13 +112,21 @@ public class ConfigurationService implements IService {
     }
 
     @Override
-    public void preInit() {}
-
-    @Override
-    public void init() {
-        this.initialized = true;
+    public void preInit() {
+        logger.log("PRE_INIT of " + getName() + " started. Gathering default values of the keys...");
+        keys.forEach((name, value) -> {
+            if (value.getValue() != value.getDefault()) {
+                logger.warn("Default value CHANGED for key: " + name + "!");
+                value.setValue(value.getDefault());
+            }
+        });
+        //TODO: Config file generation
+        logger.log("Finished PRE_INIT of " + getName() + ".");
     }
 
     @Override
-    public void postInit() {}
+    public void init() {
+        //TODO: Config File validation and parsing.
+        this.initialized = true;
+    }
 }

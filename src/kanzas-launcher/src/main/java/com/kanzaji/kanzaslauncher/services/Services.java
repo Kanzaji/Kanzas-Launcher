@@ -24,6 +24,7 @@
 
 package com.kanzaji.kanzaslauncher.services;
 
+import com.kanzaji.kanzaslauncher.KanzasLauncher;
 import com.kanzaji.kanzaslauncher.services.configuration.ConfigurationKey;
 import com.kanzaji.kanzaslauncher.services.configuration.ConfigurationService;
 
@@ -33,7 +34,8 @@ public enum Services {
     // Services enum, for easier access to services when needed.
     LOGGER(Logger.getInstance().getName()),
     CONFIG("Main Configuration Service"),
-    CLI("CLI Handler");
+    CLI("CLI Handler"),
+    GUI("GUI Service");
 
     // Fields used by ServiceManager to get services.
     public final String name;
@@ -54,9 +56,16 @@ public enum Services {
 
         ConfigurationService mainCFG = new ConfigurationService("Main Configuration Service", Path.of("Kanza's-Launcher Config.json5"));
         ServiceManager.registerService(mainCFG);
-        mainCFG.registerKey(new ConfigurationKey("App-Mode", "CLI", "mode", "Sets mode of the application. Can be: CLI / GUI"));
-        mainCFG.registerKey(new ConfigurationKey("Test1", "", "2", "test"));
-        mainCFG.registerKey(new ConfigurationKey("Test2", "", "1", "test2"));
+        mainCFG.registerKey(new ConfigurationKey("App-Mode", () -> {
+            if (
+                KanzasLauncher.ARGUMENTS.contains("-forceconsole") ||
+                System.console() != null &&
+                !KanzasLauncher.ARGUMENTS.contains("-forcegui")
+            ) return "CLI";
+            return "GUI";
+        }, "mode", "Sets mode of the application. Can be: CLI / GUI"));
+        mainCFG.registerKey(new ConfigurationKey("Test1", () -> "", "2", "test"));
+        mainCFG.registerKey(new ConfigurationKey("Test2", () -> "", "1", "test2"));
 
         ServiceManager.registerService(new CLIHandler());
     }
