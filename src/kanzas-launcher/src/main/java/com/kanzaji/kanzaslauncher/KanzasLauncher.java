@@ -25,14 +25,12 @@
 package com.kanzaji.kanzaslauncher;
 
 import com.kanzaji.kanzaslauncher.services.*;
-import com.kanzaji.kanzaslauncher.services.configuration.ConfigurationService;
 import com.kanzaji.kanzaslauncher.services.configuration.enums.MainCFG;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 public class KanzasLauncher {
     public static final String VERSION = "0.0.1-DEVELOP";
@@ -44,7 +42,7 @@ public class KanzasLauncher {
     private static final LoggerCustom logger = new LoggerCustom("Main");
 
     public static void main(String[] args) {
-        ARGUMENTS.addAll(Arrays.stream(args).map(arg -> arg.toLowerCase(Locale.ROOT)).toList());
+        ARGUMENTS.addAll(Arrays.stream(args).toList());
         try {
             logger.log("Kanza's launcher " + VERSION);
             Services.registerServices();
@@ -53,6 +51,7 @@ public class KanzasLauncher {
             ServiceManager.runInit();
 
             // For some reason, the console object is null when running this from IntelliJ. When running in IntelliJ, add -ForceConsole argument.
+            // Some features, like password hiding, will not be available in DEV environment because of that.
             // @see https://youtrack.jetbrains.com/issue/IDEA-18814/IDEA-doesnt-work-with-System.console
             if (MainCFG.isGUI()) {
                 try {

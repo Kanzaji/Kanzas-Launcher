@@ -368,19 +368,19 @@ public class SyncManager {
      * This method is used internally by {@link SyncManager} to print Synchronization statistics, like failed download tasks.
      */
     private void printStatistics() {
-        if (IgnoredRemoval.size() > 0 || IgnoredVerification.size() > 0) {
+        if (!IgnoredRemoval.isEmpty() || !IgnoredVerification.isEmpty()) {
             logger.print("Ignored mods found in the config file! (" + RandomUtils.intGrammar(SettingsManager.ModBlackList.size(), " file)", " files)", true), 1);
             logger.log("Mods contained in the blacklist:");
             SettingsManager.ModBlackList.forEach((mod) -> logger.log("- " + mod));
 
-            if (IgnoredVerification.size() > 0) {
+            if (!IgnoredVerification.isEmpty()) {
                 logger.print("> " + RandomUtils.intGrammar(IgnoredVerification.size(), " mod was", " mods were", true) + " not verified!", 1);
                 IgnoredVerification.forEach((mod) -> logger.warn("- " + CDLInstanceData.files[mod].fileName));
             } else {
                 logger.print("> All mods have been verified.");
             }
 
-            if (IgnoredRemoval.size() > 0) {
+            if (!IgnoredRemoval.isEmpty()) {
                 logger.print("> " + RandomUtils.intGrammar(IgnoredRemoval.size(), " mod was", " mods were", true) + " not removed!", 1);
                 IgnoredRemoval.forEach((mod) -> logger.warn("- " + CDLInstanceData.files[mod].fileName));
             } else {
@@ -400,23 +400,23 @@ public class SyncManager {
         if (errors > 0) {
             logger.print("Errors were found while doing synchronisation of the profile!", 2);
 
-            if (failedVerifications.size() > 0) logger.print("> Failed Verifications: " + failedVerifications.size(),2);
-            if (failedRemovals.size() > 0) logger.print("> Failed removals: " + failedRemovals.size(),2);
-            if (failedDownloads.size() > 0) logger.print("> Download errors: " + failedDownloads.size(),2);
+            if (!failedVerifications.isEmpty()) logger.print("> Failed Verifications: " + failedVerifications.size(),2);
+            if (!failedRemovals.isEmpty()) logger.print("> Failed removals: " + failedRemovals.size(),2);
+            if (!failedDownloads.isEmpty()) logger.print("> Download errors: " + failedDownloads.size(),2);
 
             System.out.println("For more details, check log file at " + logger.getLogPath());
 
-            if (failedVerifications.size() > 0) {
+            if (!failedVerifications.isEmpty()) {
                 logger.error("Files that failed verification with an exception:");
                 failedVerifications.forEach((index) -> logger.error("  " + CDLInstanceData.files[index].fileName));
             }
 
-            if (failedRemovals.size() > 0) {
+            if (!failedRemovals.isEmpty()) {
                 logger.error("Files that weren't possible to remove:");
                 failedRemovals.forEach((FileName) -> logger.error("  " + FileName));
             }
 
-            if (failedDownloads.size() > 0) {
+            if (!failedDownloads.isEmpty()) {
                 logger.error("Files that failed to Download:");
                 failedDownloads.forEach((index) -> {
                     CDLInstance.ModFile mod = CDLInstanceData.files[index];
@@ -432,7 +432,7 @@ public class SyncManager {
         //TODO: Proper warning from the data gathering,
         // this is here just to give info that some mods were not found
         // and fallback was found to give possibility to play that instance!
-        if (CFManifest.DataGatheringWarnings.size() > 0) {
+        if (!CFManifest.DataGatheringWarnings.isEmpty()) {
             logger.print("Data gathering warnings found!",1);
             logger.print("This might signal that some mods were not found and fallback was used.",1);
             System.out.println("Please inspect your log file at " + logger.getLogPath() + " for more information.");

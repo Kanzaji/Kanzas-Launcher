@@ -22,52 +22,18 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.kanzaslauncher.services;
+package com.kanzaji.kanzaslauncher.services.configuration.parsers;
 
-import com.kanzaji.kanzaslauncher.KanzasLauncher;
-import com.kanzaji.kanzaslauncher.services.configuration.ConfigurationKey;
-import com.kanzaji.kanzaslauncher.services.configuration.ConfigurationService;
+import java.util.function.Function;
 
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Locale;
-
-public enum Services {
-    // Services enum, for easier access to services when needed.
-    LOGGER(Logger.getInstance().getName()),
-    CONFIG("Main Configuration Service"),
-    CLI("CLI Handler"),
-    GUI("GUI Service");
-
-    // Fields used by ServiceManager to get services.
-    public final String name;
-    Services(String name) {
-        this.name = name;
-    }
-
-    // Other methods related to services
+@FunctionalInterface
+public interface ThrowingFunction<T,R> {
 
     /**
-     * Used to register services to ServiceManager.
-     * @apiNote Even tho it's possible to register new service anywhere,
-     * and the ENUM isn't required, for consistency reasons,
-     * new services should be registered here with added ENUM entry.
+     * Applies this function to the given argument.
+     *
+     * @param t the function argument
+     * @return the function result
      */
-    public static void registerServices() {
-        ServiceManager.registerService(Logger.getInstance());
-
-        ConfigurationService mainCFG = new ConfigurationService("Main Configuration Service", Path.of("Kanza's-Launcher-Config.json5"));
-        ServiceManager.registerService(mainCFG);
-        mainCFG.registerKey(new ConfigurationKey("App-Mode", () -> {
-            List<String> args = KanzasLauncher.ARGUMENTS.stream().map(arg -> arg.toLowerCase(Locale.ROOT)).toList();
-            if (
-                args.contains("-forceconsole") ||
-                System.console() != null &&
-                !args.contains("-forcegui")
-            ) return "CLI";
-            return "GUI";
-        }, "Mode", "Sets mode of the application. Can be: CLI / GUI"));
-
-        ServiceManager.registerService(new CLIHandler());
-    }
+    R apply(T t) throws Throwable;
 }
