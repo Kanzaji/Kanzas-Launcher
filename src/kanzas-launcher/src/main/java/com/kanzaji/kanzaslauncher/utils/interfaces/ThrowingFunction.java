@@ -22,7 +22,7 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.kanzaslauncher.services.configuration.parsers;
+package com.kanzaji.kanzaslauncher.utils.interfaces;
 
 import java.util.function.Function;
 

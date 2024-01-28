@@ -24,6 +24,8 @@
 
 package com.kanzaji.kanzaslauncher.services;
 
+import com.kanzaji.kanzaslauncher.services.interfaces.ILogger;
+import com.kanzaji.kanzaslauncher.services.interfaces.IService;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +47,7 @@ import java.util.*;
 public class ServiceManager {
     private static State status = State.NOT_INIT;
     private static final Map<String, IService> services = new HashMap<>();
-    private static final LoggerCustom logger = new LoggerCustom("Service Manager");
+    private static final ILogger logger = Logger.getInstance().get("Service Manager");
     @Contract(pure = true)
     private ServiceManager() {}
 

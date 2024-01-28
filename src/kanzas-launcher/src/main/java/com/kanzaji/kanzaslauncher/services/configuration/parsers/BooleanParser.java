@@ -24,6 +24,8 @@
 
 package com.kanzaji.kanzaslauncher.services.configuration.parsers;
 
+import com.kanzaji.kanzaslauncher.utils.interfaces.ThrowingFunction;
+
 public class BooleanParser implements ThrowingFunction<Object, Object> {
 
     /**
@@ -34,7 +36,11 @@ public class BooleanParser implements ThrowingFunction<Object, Object> {
      */
     @Override
     public Object apply(Object s) {
-        if (s instanceof String) return Boolean.parseBoolean((String) s);
+        if (s instanceof String) {
+            // Blank string on default is counted as false, what might be good in some cases, but in this case, it only causes issues.
+            if (((String) s).isBlank()) throw new IllegalArgumentException("Blank string is not acceptable as a boolean value!");
+            return Boolean.parseBoolean((String) s);
+        }
         return (Boolean) s;
     }
 }

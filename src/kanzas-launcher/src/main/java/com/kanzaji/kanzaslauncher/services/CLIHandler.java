@@ -24,6 +24,8 @@
 
 package com.kanzaji.kanzaslauncher.services;
 
+import com.kanzaji.kanzaslauncher.services.interfaces.IService;
+
 import java.io.Console;
 import java.util.List;
 

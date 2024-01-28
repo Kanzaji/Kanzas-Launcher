@@ -24,10 +24,13 @@
 
 package com.kanzaji.kanzaslauncher.services;
 
+import com.kanzaji.kanzaslauncher.services.interfaces.ILogger;
+import com.kanzaji.kanzaslauncher.services.interfaces.IService;
+
 import java.util.List;
 
 public class InstallationManager implements IService {
-    private static final LoggerCustom logger = new LoggerCustom("Installation Manager");
+    private static final ILogger logger = ServiceManager.get(Services.LOGGER);
     @Override
     public String getName() {
         return "Installation Manager";

@@ -34,7 +34,8 @@ public enum MainCFG {
      * Holds information about the mode of the app. Can be CLI or GUI.
      * @apiNote Class: {@link String}
      */
-    MODE("App-Mode");
+    MODE("App-Mode"),
+    LOG_LIMIT("Log-Stockpile-Limit");
 
     // Fields and Methods.
     public final String name;

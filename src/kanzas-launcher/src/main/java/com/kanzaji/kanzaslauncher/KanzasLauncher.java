@@ -26,6 +26,7 @@ package com.kanzaji.kanzaslauncher;
 
 import com.kanzaji.kanzaslauncher.services.*;
 import com.kanzaji.kanzaslauncher.services.configuration.enums.MainCFG;
+import com.kanzaji.kanzaslauncher.services.interfaces.ILogger;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class KanzasLauncher {
     @SuppressWarnings("ConstantConditions")
     public static final boolean SNAPSHOT = VERSION.endsWith("SNAPSHOT");
     public static final List<String> ARGUMENTS = new ArrayList<>();
-    private static final LoggerCustom logger = new LoggerCustom("Main");
+    private static final ILogger logger = Logger.getInstance().get("Main");
 
     public static void main(String[] args) {
         ARGUMENTS.addAll(Arrays.stream(args).toList());
@@ -75,7 +76,13 @@ public class KanzasLauncher {
             ServiceManager.runExit();
         } catch (Throwable e) {
             if (!logger.isInitialized()) Logger.getInstance().crashInit();
-            logger.logStackTrace("Kanza's Launcher crashed!", e);
+
+            try {
+                logger.logStackTrace("Kanza's Launcher crashed!", e);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
             System.out.println("Kanza's Launcher crashed! Exception: \"" + e.getMessage() + "\"! For more details, check the log file at: \n" + logger.getLogPath());
             ServiceManager.runCrash();
         }

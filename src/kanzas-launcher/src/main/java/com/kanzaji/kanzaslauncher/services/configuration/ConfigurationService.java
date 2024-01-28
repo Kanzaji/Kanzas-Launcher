@@ -34,15 +34,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.kanzaji.kanzaslauncher.services.IService;
-import com.kanzaji.kanzaslauncher.services.LoggerCustom;
+import com.kanzaji.kanzaslauncher.services.Logger;
+import com.kanzaji.kanzaslauncher.services.Services;
+import com.kanzaji.kanzaslauncher.services.interfaces.ILogger;
+import com.kanzaji.kanzaslauncher.services.interfaces.IService;
 import com.kanzaji.kanzaslauncher.services.ServiceManager;
 import com.kanzaji.kanzaslauncher.services.ServiceManager.State;
 import org.jetbrains.annotations.NotNull;
 
 public class ConfigurationService implements IService {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private final LoggerCustom logger;
+    private static final Logger mainLogger = Services.getLogger();
+    private final ILogger logger;
     private final String name;
     public final Path configFile;
     private final Map<String, ConfigurationKey> keys = new LinkedHashMap<>();
@@ -56,7 +59,7 @@ public class ConfigurationService implements IService {
     public ConfigurationService(String name, Path configFile) {
         this.name = name;
         this.configFile = configFile;
-        this.logger = new LoggerCustom(name);
+        this.logger = mainLogger.get(name);
         ConfigurationConflictService.addService(this);
     }
 
@@ -113,12 +116,23 @@ public class ConfigurationService implements IService {
         return name;
     }
 
+    /**
+     * Used to get the value of a specified key.
+     * @param key Name of the key.
+     * @return Value of the key.
+     */
     public Object getValue(@NotNull String key) {
         if (!this.initialized) throw new IllegalStateException(this.getName() + " is not yet initialized! Can't get config values before INIT.");
         if (!keys.containsKey(Objects.requireNonNull(key))) throw new IllegalArgumentException("Key with name: " + key + " not found!");
         return keys.get(key).getValue();
     }
 
+    /**
+     * Used to set the value of a specified key.
+     * @param key Name of the key.
+     * @param value Value to set the key to.
+     * @return Set value.
+     */
     public Object setValue(@NotNull String key, @NotNull Object value) {
         if (!this.initialized) throw new IllegalStateException(this.getName() + " is not yet initialized! Can't get config values before INIT.");
         if (!keys.containsKey(Objects.requireNonNull(key))) throw new IllegalArgumentException("Key with name: " + key + " not found!");
@@ -159,8 +173,14 @@ public class ConfigurationService implements IService {
         }
 
         logger.log("Loading configuration file...");
-        Map<String, Object> config = gson.fromJson(Files.readString(configFile), new TypeToken<Map<String, Object>>(){}.getType());
+        Map<String, Object> config = new LinkedHashMap<>();
         AtomicBoolean configRegeneration = new AtomicBoolean(false);
+        try {
+            config.putAll(gson.fromJson(Files.readString(configFile), new TypeToken<Map<String, Object>>(){}.getType()));
+        } catch (Exception e) {
+            logger.logStackTrace("Failed parsing configuration file! The file is going to be regenerated with defaults...", e);
+            configRegeneration.set(true);
+        }
 
         keys.forEach((name, key) -> {
             if (!config.containsKey(name)) {
@@ -209,6 +229,11 @@ public class ConfigurationService implements IService {
         return Objects.nonNull(this.configFile);
     }
 
+    /**
+     * Used to generate configuration file from the configuration service data.
+     * @param path Path to generate configuration file at.
+     * @throws IOException When IO Exception occurs.
+     */
     private void generateConfig(Path path) throws IOException {
         path = path.toAbsolutePath();
         if (Files.exists(path)) throw new FileAlreadyExistsException("Specified location already exists!");
@@ -226,7 +251,7 @@ public class ConfigurationService implements IService {
             ConfigurationKey key = keys.get(keyNames.get(index));
             if (entry.strip().startsWith("\"" + key.getName() + "\":")) {
                 if (index+1 < keyNames.size()) index++;
-                if (key.getDesc() != null) configJson.append("  // ").append(key.getDesc()).append("\n");
+                if (key.getDesc() != null) configJson.append("  // ").append(key.getDesc().replaceAll("\n", "\n  // ")).append("\n");
                 if (key.getArg() != null) configJson.append("  // Argument representation: -").append(key.getArg()).append("\n");
             }
             configJson.append(entry).append("\n\n");

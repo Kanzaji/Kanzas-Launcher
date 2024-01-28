@@ -22,72 +22,46 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.kanzaslauncher.services;
+package com.kanzaji.kanzaslauncher.services.interfaces;
 
-import org.jetbrains.annotations.Nullable;
+import com.kanzaji.kanzaslauncher.services.ServiceManager;
 
-import java.io.IOException;
-import java.util.Objects;
+import java.util.List;
 
-/**
- * This class is a wrapper of single instance {@link Logger} service used for creating Loggers with custom names.
- */
-public class LoggerCustom implements ILogger {
-    private final Logger logger = Logger.getInstance();
-    private String name = "default";
+public interface IService {
+    String getName();
 
     /**
-     * Constructor for the Custom Logger.
-     * @param name A name of the logger that will be printed in the logged messages.
+     * Used to get lists of implemented phases.
+     * Only phases mentioned in a returned list are executed, even if implemented.
+     * @return List with implemented initialization phases.
      */
-    public LoggerCustom(String name) {
-        if (Objects.nonNull(name)) this.name = name;
-    }
+    List<ServiceManager.State> getPhases();
+    /**
+     * Used for PreInit phase of the service.
+     * @throws Throwable Possible exception from the PreInit phase.
+     */
+    default void preInit() throws Throwable {}
+    /**
+     * Used for Init phase of the service.
+     * @throws Throwable Possible exception from the Init phase.
+     */
+    default void init() throws Throwable {}
+    /**
+     * Used for PostInit phase of the service.
+     * @throws Throwable Possible exception from the PostInit phase.
+     */
+    default void postInit() throws Throwable {}
 
     /**
-     * Used to get a path to a log file.
-     * @return String with the absolute path of a log file.
+     * Used for handling the exit off the application if required.
+     * @throws Throwable Possible exception from the Exit phase.
      */
-    @Override
-    public String getLogPath() {
-        return logger.getLogPath();
-    }
+    default void exit() throws Throwable {}
 
     /**
-     * Used to disable Logger and remove the log file.
-     * @throws IOException when log deletion failed.
+     * Used for handling the unexpected exit (crash) off the application if required.
+     * @throws Throwable Possible exception from the Exit phase.
      */
-    @Override
-    public void exit() throws IOException {
-        logger.exit();
-    }
-
-    /**
-     * Used to get boolean with the state of initialization of the Logger.
-     *
-     * @return {@link Boolean} true if logger has been initialized successfully, false otherwise.
-     * @apiNote Has to be implemented manually.
-     */
-    @Override
-    public boolean isInitialized() {
-        return logger.isInitialized();
-    }
-
-    /**
-     * Custom Log method that allows to set level of log, message and attach throwable.
-     * Available levels:
-     * <ul>
-     *     <li>0 | LOG</li>
-     *     <li>1 | WARN</li>
-     *     <li>2 | ERROR</li>
-     *     <li>3 | CRITICAL</li>
-     * </ul>
-     * @param msg String message to log to a log file.
-     * @param type Int between 0 and 3 specifying selected level. Defaults to 0. (Nullable)
-     * @param throwable Exception to log. (Nullable)
-     */
-    @Override
-    public void logCustom(String msg, int type, @Nullable Throwable throwable) {
-        logger.logCustom("[" + name + "] " + msg, type, throwable);
-    }
+    default void crash() throws Throwable {}
 }

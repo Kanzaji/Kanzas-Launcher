@@ -24,8 +24,9 @@
 
 package com.kanzaji.kanzaslauncher.services.configuration;
 
-import com.kanzaji.kanzaslauncher.services.IService;
-import com.kanzaji.kanzaslauncher.services.LoggerCustom;
+import com.kanzaji.kanzaslauncher.services.Services;
+import com.kanzaji.kanzaslauncher.services.interfaces.ILogger;
+import com.kanzaji.kanzaslauncher.services.interfaces.IService;
 import com.kanzaji.kanzaslauncher.services.ServiceManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,17 +38,16 @@ import java.util.Objects;
  * ConfigurationConflictService is used to prevent conflicts between different Configuration Services, and prevent issues with accidental overlapping configuration keys.
  */
 public class ConfigurationConflictService implements IService {
-    private static final LoggerCustom logger = new LoggerCustom("Configuration Conflict Prevention Service");
-
+    private static final ILogger logger = Services.getLogger().get("Configuration Conflict Prevention Service");
     private static final List<ConfigurationService> CFGServices = new ArrayList<>();
-
-    protected static void addService(@NotNull ConfigurationService service) {
-        CFGServices.add(Objects.requireNonNull(service));
-    }
 
     @Override
     public String getName() {
         return "Configuration Conflict Prevention Service";
+    }
+
+    protected static void addService(@NotNull ConfigurationService service) {
+        CFGServices.add(Objects.requireNonNull(service));
     }
 
     /**
@@ -68,6 +68,7 @@ public class ConfigurationConflictService implements IService {
      */
     @Override
     public void postInit() throws Throwable {
+        //TODO: Do check for conflicts between services
         logger.log("Scanning Configuration services for potential conflicts...");
         CFGServices.forEach(service -> {
 

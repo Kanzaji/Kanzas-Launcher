@@ -24,7 +24,7 @@
 
 package com.kanzaji.kanzaslauncher.services.configuration;
 
-import com.kanzaji.kanzaslauncher.services.configuration.parsers.ThrowingFunction;
+import com.kanzaji.kanzaslauncher.utils.interfaces.ThrowingFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -144,7 +144,7 @@ public class ConfigurationKey {
      * Constructor of the ConfigurationKey.
      * @param registryName Required. Used to represent the configuration key in the registry. Used as name in the Configuration file.
      * @param defaultValue Required non-native. Sets the class of this Configuration Key.
-     * @param description Not Required. Used to add description in the configuration file of that key.
+     * @param parser Not Required for some classes or keys for services without configuration files. Used to process Strings from Config file.
      */
     public ConfigurationKey(
             @NotNull String registryName,

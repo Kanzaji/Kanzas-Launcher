@@ -24,6 +24,8 @@
 
 package com.kanzaji.kanzaslauncher.services.configuration.parsers;
 
+import com.kanzaji.kanzaslauncher.utils.interfaces.ThrowingFunction;
+
 public class IntegerParser implements ThrowingFunction<Object, Object> {
 
     /**

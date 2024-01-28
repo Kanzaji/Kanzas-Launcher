@@ -22,7 +22,7 @@
  * SOFTWARE.                                                                          *
  **************************************************************************************/
 
-package com.kanzaji.kanzaslauncher.services;
+package com.kanzaji.kanzaslauncher.services.interfaces;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -31,20 +31,13 @@ import java.io.IOException;
 /**
  * This interface is used to create logger services. Functions for different log levels are already implemented.
  */
-interface ILogger {
+public interface ILogger {
     /**
      * Used to get a path to a log file.
      * @return {@link String} with absolute path of a log file.
      * @apiNote Has to be implemented manually.
      */
     String getLogPath();
-
-    /**
-     * Used to disable Logger and remove log file.
-     * @throws IOException when log deletion failed.
-     * @apiNote Has to be implemented manually.
-     */
-    void exit() throws IOException;
 
     /**
      * Used to get boolean with the state of initialization of the Logger.

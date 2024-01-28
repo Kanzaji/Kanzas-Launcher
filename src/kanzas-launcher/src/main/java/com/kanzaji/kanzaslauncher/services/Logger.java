@@ -27,6 +27,8 @@ package com.kanzaji.kanzaslauncher.services;
 import com.kanzaji.catdownloaderlegacy.registry.ArgumentHandlerRegistry;
 import com.kanzaji.catdownloaderlegacy.utils.DateUtils;
 import com.kanzaji.catdownloaderlegacy.utils.FileUtils;
+import com.kanzaji.kanzaslauncher.services.interfaces.ILogger;
+import com.kanzaji.kanzaslauncher.services.interfaces.IService;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -38,15 +40,17 @@ import java.util.stream.Stream;
 
 /**
  * This class is the main instance of the Logger Service. It handles creation, stockpiling and logging to log files.
- * @apiNote This class is a Singleton, use {@link Logger#getInstance()} for reference of this class.
- * @see LoggerCustom
+ * @apiNote This class is currently under a rework, this might cause issues and unexpected behavior until rework is complete.
  */
 public class Logger implements ILogger, IService {
+    //TODO:
+    // - Rework POST_INIT
+    // - Implement new ConfigurationService, remove use of old ARD from CDL
+    @Deprecated(forRemoval = true, since = "0.0.1-DEV")
     private static final ArgumentHandlerRegistry ARD = ArgumentHandlerRegistry.getInstance();
     private static final class InstanceHolder {private static final Logger instance = new Logger();}
     private Logger() {}
     private boolean crashed = false;
-    private boolean disabled = false;
     private boolean initialized = false;
     private Path LogFile = Path.of("Kanza's-Launcher.log");
     private final List<PreInitMessage> preInitMessages = new LinkedList<>();
@@ -54,12 +58,36 @@ public class Logger implements ILogger, IService {
     /**
      * Used to get an instance of the Logger.
      * @return Reference to an instance of the Logger.
-     * @apiNote This was changed to PROTECTED due to rework of the logging service for use with {@link ServiceManager},
-     * use ServiceManager to access the logger instead.
+     * @apiNote This is meant only for situations before ServiceManager is available,
+     * please use {@link ServiceManager#get(String)} with {@link Services#LOGGER} instead.
      */
-    //TODO: Finish rework of the logger.
     public static Logger getInstance() {
         return InstanceHolder.instance;
+    }
+
+    /**
+     * Used to get new ILogger instance wrapping this logger with custom name.
+     * @param name name to use in the logs.
+     * @return new ILogger implementation with name before all logged messages.
+     */
+    public ILogger get(String name) {
+        return new ILogger() {
+            private final Logger logger = Logger.getInstance();
+            @Override
+            public String getLogPath() {
+                return logger.getLogPath();
+            }
+
+            @Override
+            public boolean isInitialized() {
+                return logger.isInitialized();
+            }
+
+            @Override
+            public void logCustom(String msg, int type, @Nullable Throwable throwable) {
+                logger.logCustom("[" + name + "] " + msg, type, throwable);
+            }
+        };
     }
 
     /**
@@ -86,9 +114,7 @@ public class Logger implements ILogger, IService {
      * @return String with the absolute path of a log file.
      */
     public String getLogPath() {
-        if (this.LogFile == null) {
-            return null;
-        }
+        if (this.LogFile == null) return null;
         return this.LogFile.toAbsolutePath().toString();
     }
 
@@ -97,17 +123,13 @@ public class Logger implements ILogger, IService {
      * @apiNote This is separate from preInit of IService for future possibility of changes.
      */
     private void initLogger() throws Throwable {
-        // Gives an option to re-enable the Logger if I want to add this functionality in the future.
-        if (disabled) {disabled = false;}
         try {
             if (Files.exists(this.LogFile)) {
                 Files.move(this.LogFile, Path.of("Kanza's-Launcher Archived.log"), StandardCopyOption.REPLACE_EXISTING);
-                Files.createFile(this.LogFile);
                 this.log("Old Log file found! \"" + this.LogFile.toAbsolutePath() + "\" file has been archived for now.");
-            } else {
-                Files.createFile(this.LogFile);
-                this.log("\"" + this.LogFile.toAbsolutePath() + "\" file created.");
             }
+            Files.createFile(this.LogFile);
+            this.log("\"" + this.LogFile.toAbsolutePath() + "\" file created.");
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -118,6 +140,10 @@ public class Logger implements ILogger, IService {
         logPreInitMessages();
     }
 
+    /**
+     * Used as a last resort to try to initialize the logger. If it fails, it prints everything to the console.
+     * @see Logger#initLogger() for any other scenario for logger initialization.
+     */
     public void crashInit() {
         try {
             this.initLogger();
@@ -129,8 +155,8 @@ public class Logger implements ILogger, IService {
                     Files.createFile(this.LogFile);
                     this.warn("Successfully created new log file.");
                 } catch (Exception e) {
-                    this.disabled = true;
                     this.error("Failed creating log file! Printing entire pre-init messages to the console.");
+                    crashed = true;
                 }
             } else {
                 this.warn("USING OLD LOG FILE DUE TO APPLICATION CRASH.");
@@ -152,8 +178,10 @@ public class Logger implements ILogger, IService {
         this.initLogger();
     }
 
-    //TODO: Rework this. It "works" but is terrible as in most cases it's duplicated code over and over again lmao.
-    // I already have File Compression utilities, so I should use that fully instead.
+    public void newpostInit() {
+
+    }
+
     /**
      * Used to finish initialization of the Logger.
      * Handles the Stockpiling function of the logs, and moving the log file to a new location.
@@ -162,7 +190,6 @@ public class Logger implements ILogger, IService {
      */
     @Override
     public void postInit() throws IllegalStateException, IOException {
-        this.log("Post-Initialization of Logger started!");
         Path logPath = Path.of(ARD.getLogPath());
         Path archivedLog = Path.of("Kanza's-Launcher Archived.log");
         Path logInLogPath = Path.of(logPath.toString(), "Kanza's-Launcher.log");
@@ -313,18 +340,6 @@ public class Logger implements ILogger, IService {
     }
 
     /**
-     * Used to disable Logger and remove the log file.
-     * @throws IOException when log deletion failed.
-     */
-    public void exit() throws IOException {
-        System.out.println("LOGGER WAS DISABLED. If any errors occur they will not be logged and can be not shown in the console! Use at your own risk.");
-        this.disabled = true;
-        Files.readAllLines(this.LogFile).forEach(System.out::println);
-        Files.deleteIfExists(this.LogFile);
-        this.LogFile = null;
-    }
-
-    /**
      * Used to get boolean with the state of initialization of the Logger.
      *
      * @return {@link Boolean} true if logger has been initialized successfully, false otherwise.
@@ -345,10 +360,11 @@ public class Logger implements ILogger, IService {
      *     <li>3 | CRITICAL</li>
      * </ul>
      * @param msg String message to log to a log file.
-     * @param type Int between 0 and 2 specifying selected level. Defaults to 0. (Nullable)
+     * @param type Int between 0 and 3 specifying selected level. Defaults to 0.
      * @param throwable Exception to log. (Nullable)
      */
     public void logCustom(String msg, int type, @Nullable Throwable throwable) {
+        if (Objects.nonNull(msg) && !msg.startsWith("[")) msg = "[Logger] " + msg;
         if (!isInitialized()) {
             this.preInitMessages.add(new PreInitMessage(msg, type, throwable));
             return;
@@ -361,7 +377,7 @@ public class Logger implements ILogger, IService {
             default -> "INFO";
         };
 
-        if (disabled) {
+        if (crashed) {
             System.out.println("[" + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS").format(new Date()) + "] [" + Type + "] " + msg);
             if (throwable != null) throwable.printStackTrace();
             return;
@@ -372,38 +388,57 @@ public class Logger implements ILogger, IService {
             if (throwable != null) {
                 StackTraceElement[] stackTraceList = throwable.getStackTrace();
                 StringBuilder stackTrace = new StringBuilder();
-                for (StackTraceElement stackTraceElement : stackTraceList) {
-                    stackTrace.append("    at ").append(stackTraceElement).append("\n");
-                }
 
-                Files.writeString(this.LogFile, "[" + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS").format(new Date()) + "] [" + Type + "] " + throwable + "\n" + stackTrace, StandardOpenOption.APPEND);
+                for (StackTraceElement stackTraceElement : stackTraceList) stackTrace.append("\tat ").append(stackTraceElement).append("\n");
 
-                if (Objects.nonNull(throwable.getCause())) {
-                    this.logStackTrace("Caused By:", throwable.getCause());
-                }
+                Files.writeString(
+                    this.LogFile,
+                    "[" + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS").format(new Date()) + "] [" + Type + "] " +
+                    throwable + "\n" + stackTrace, StandardOpenOption.APPEND
+                );
 
-                for (Throwable throwable1 : throwable.getSuppressed()) {
-                    this.logStackTrace("Suppressed Exception!", throwable1);
-                }
+                if (Objects.nonNull(throwable.getCause())) this.logStackTrace("Caused By:", throwable.getCause());
+                for (Throwable throwable1 : throwable.getSuppressed()) this.logStackTrace("Contains suppressed exception:", throwable1);
             }
         } catch (NoSuchFileException e) {
-            if (this.crashed) {
-                e.printStackTrace();
-                System.exit(1);
-            }
-            this.crashed = true;
             try {
                 this.initLogger();
             } catch (Throwable ex) {
                 this.crashInit();
+                if (crashed) {
+                    this.error("Failed generating new log file! Application will now exit.");
+                    throw new RuntimeException("Failed generating log file!");
+                }
             }
             this.error("Log file seems to had been deleted! Created another copy, but the rest of the log file has been lost.");
             this.error("Catching last message...");
             this.log(msg);
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Used to hold log entries before initialization of the logger and creation of the log file.
+     * @param msg Message content
+     * @param type Message Type
+     * @param ex Throwable, if any.
+     */
     private record PreInitMessage(String msg, int type, Throwable ex) {}
+
+    /**
+     * Used to disable Logger and remove the log file.
+     * @throws IOException when log deletion failed.
+     * @deprecated This functionality is removed, as this is a proper app that requires the creation of custom directories,
+     * so disabling of the logger is not necessary or even useful.
+     */
+    @Deprecated(since = "0.0.1-DEV", forRemoval = true)
+    public void exit() throws IOException {
+//        System.out.println("LOGGER WAS DISABLED. If any errors occur they will not be logged and can be not shown in the console! Use at your own risk.");
+//        this.disabled = true;
+//        Files.readAllLines(this.LogFile).forEach(System.out::println);
+//        Files.deleteIfExists(this.LogFile);
+//        this.LogFile = null;
+    }
 }

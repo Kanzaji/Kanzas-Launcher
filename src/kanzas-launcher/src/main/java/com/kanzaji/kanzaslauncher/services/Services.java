@@ -27,6 +27,8 @@ package com.kanzaji.kanzaslauncher.services;
 import com.kanzaji.kanzaslauncher.KanzasLauncher;
 import com.kanzaji.kanzaslauncher.services.configuration.ConfigurationKey;
 import com.kanzaji.kanzaslauncher.services.configuration.ConfigurationService;
+import com.kanzaji.kanzaslauncher.services.configuration.parsers.IntegerParser;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -43,6 +45,16 @@ public enum Services {
     public final String name;
     Services(String name) {
         this.name = name;
+    }
+
+    // Utility
+
+    /**
+     * Used to get instance of the logger from ServiceManager.
+     * @return Instance of the main logger service.
+     */
+    public static @NotNull Logger getLogger() {
+        return ServiceManager.get(LOGGER);
     }
 
     // Other methods related to services
@@ -67,6 +79,18 @@ public enum Services {
             ) return "CLI";
             return "GUI";
         }, "Mode", "Sets mode of the application. Can be: CLI / GUI"));
+
+        mainCFG.registerKey(new ConfigurationKey("Log-Stockpile-Limit", () -> 0, (value) -> {
+            if (value instanceof Boolean) return ((Boolean) value)? 0: -1;
+            if (value instanceof Integer || value instanceof Double) return new IntegerParser().apply(value);
+            throw new IllegalArgumentException("Illegal value type for this key! Can only be Boolean or Integer.");
+        }, """
+            Sets maximum number of logs stored by the launcher.
+            Accepts:
+            - True or 0 -> No limit.
+            - False or < 0 -> Only the latest log.
+            - Number -> Sets custom limit."""
+        ));
 
         ServiceManager.registerService(new CLIHandler());
     }
