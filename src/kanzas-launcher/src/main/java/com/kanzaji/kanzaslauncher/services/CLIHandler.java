@@ -25,9 +25,12 @@
 package com.kanzaji.kanzaslauncher.services;
 
 import com.kanzaji.kanzaslauncher.services.interfaces.IService;
+import com.kanzaji.kanzaslauncher.utils.cli.Colors;
+import org.fusesource.jansi.AnsiConsole;
 
 import java.io.Console;
 import java.util.List;
+import java.util.Objects;
 
 public class CLIHandler implements IService {
     private static final Console console = System.console();
@@ -53,5 +56,22 @@ public class CLIHandler implements IService {
     @Override
     public void init() throws Throwable {
 
+    }
+
+    /**
+     * Starts up CLI.
+     */
+    public void run() {
+        if (!hasConsole()) {
+            System.out.println("Console object not available. Some functions might not be available.");
+        } else {
+            AnsiConsole.systemInstall();
+        }
+        System.out.println(Colors.RED.foreground() + " this is a test of colors" + Colors.reset());
+
+    }
+
+    private boolean hasConsole() {
+        return Objects.nonNull(console);
     }
 }

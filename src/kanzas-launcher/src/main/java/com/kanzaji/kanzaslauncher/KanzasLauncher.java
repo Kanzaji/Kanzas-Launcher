@@ -70,6 +70,8 @@ public class KanzasLauncher {
                 );
 
                 throw new IllegalStateException("GUI mode is WIP.");
+            } else {
+                ServiceManager.<CLIHandler>get(Services.CLI).run();
             }
 
             ServiceManager.runPostInit();
